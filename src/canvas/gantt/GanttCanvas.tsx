@@ -43,6 +43,16 @@ export function GanttCanvas() {
   const scroller = useRef<HTMLDivElement>(null);
   const leftWrap = useRef<HTMLDivElement>(null);
   const [scroll, setScroll] = useState({ left: 0, top: 0 });
+  const [viewW, setViewW] = useState(0);
+
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setViewW(el.clientWidth));
+    ro.observe(el);
+    setViewW(el.clientWidth);
+    return () => ro.disconnect();
+  }, []);
   const selected = useSelection((s) => s.ids);
   const sel = new Set(selected);
   const [drag, setDrag] = useState<Drag | null>(null);
@@ -81,7 +91,7 @@ export function GanttCanvas() {
   }, [scheduled, timeBased]);
 
   const fitScale = () => {
-    const w = (scroller.current?.clientWidth ?? 700) - 40;
+    const w = (viewW || 700) - 40;
     return Math.max(w, 200) / Math.max(range.t1 - range.t0, MIN);
   };
   useEffect(() => setPxPerMs(null), [docId]);

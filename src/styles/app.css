@@ -1101,6 +1101,21 @@ textarea {
 
 /* ---------- Inspector ---------- */
 
+.inspector .segmented {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.inspector .segmented button {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+.inspector .pane-body {
+  overflow-x: hidden;
+}
+
 .inspector-section {
   padding: 12px;
   border-bottom: 1px solid var(--border);
