@@ -54,6 +54,31 @@ export function errorInfo(err: unknown): ValidationError {
   return { message, line };
 }
 
+/**
+ * Mermaid numbers lines after dropping the frontmatter, directives, comment
+ * lines and leading blank lines. Maps such a line number back to the editor.
+ */
+export function sourceLine(code: string, reported: number): number {
+  const lines = code.replace(/\r\n?/g, '\n').split('\n');
+  const kept: number[] = [];
+  let i = 0;
+  if (lines[0]?.trim() === '---') {
+    const close = lines.findIndex((l, k) => k > 0 && l.trim() === '---');
+    i = close === -1 ? 0 : close + 1;
+  }
+  for (; i < lines.length; i++) {
+    const t = lines[i].trim();
+    if (t.startsWith('%%{')) {
+      while (i < lines.length && !lines[i].includes('}%%')) i++;
+      continue;
+    }
+    if (t.startsWith('%%')) continue;
+    if (!kept.length && !t) continue;
+    kept.push(i + 1);
+  }
+  return kept[reported - 1] ?? reported;
+}
+
 export function renderDiagram(code: string, opts: RenderOptions): Promise<string> {
   return exclusive(async () => {
     const mermaid = await loadMermaid();
@@ -77,7 +102,8 @@ export function validateDiagram(code: string): Promise<ValidationError | null> {
       await mermaid.parse(code);
       return null;
     } catch (err) {
-      return errorInfo(err);
+      const info = errorInfo(err);
+      return info.line ? { ...info, line: sourceLine(code, info.line) } : info;
     }
   });
 }
