@@ -1,6 +1,8 @@
 # Mermaid-Melody-Editor
 
-Éditeur visuel pour les diagrammes [Mermaid](https://mermaid.js.org), sous forme d'application web. Le code Mermaid et le canvas restent synchronisés dans les deux sens : modifier l'un met à jour l'autre immédiatement.
+Éditeur visuel pour les diagrammes [Mermaid](https://mermaid.js.org), sous forme d'application web. On édite directement sur le rendu Mermaid : cliquer un élément le sélectionne et affiche ses propriétés, double-cliquer le renomme, glisser d'un élément à un autre les relie. Le code Mermaid reste synchronisé dans les deux sens : modifier l'un met à jour l'autre immédiatement.
+
+Un canvas libre (éléments déplaçables à la main) est aussi disponible, seul ou à côté de l'aperçu.
 
 ## Fonctionnalités
 
@@ -14,7 +16,7 @@
   - **Gantt** : sections, tâches et jalons, dépendances `after` / `until`, déplacement et redimensionnement des barres à la souris, jours exclus (week-ends, dates).
 - **Les autres types Mermaid** (pie, journey, gitGraph, timeline, C4…) s'éditent en code avec aperçu en direct.
 - **Éditeur de code** avec coloration syntaxique, autocomplétion et erreurs soulignées à la bonne ligne.
-- **Aperçu Mermaid** rendu par le moteur officiel, avec zoom, thèmes Mermaid (`default`, `neutral`, `forest`, `dark`, `base`) et style dessiné à la main.
+- **Aperçu Mermaid éditable**, rendu par le moteur officiel : sélection, renommage, suppression, ajout d'éléments et liaison par glisser sur le dessin lui-même, avec zoom, thèmes Mermaid (`default`, `neutral`, `forest`, `dark`, `base`) et style dessiné à la main.
 - **Export** SVG, PNG, `.mmd`, Markdown et projet `.json` (code et mise en page) ; copie du code, du bloc Markdown ou du SVG.
 - **Import** de fichiers `.mmd`, `.md` (tous les blocs ```` ```mermaid ````) et `.json`, par menu ou glisser-déposer ; collage de code.
 - **Partage** par lien (le diagramme est compressé dans l'URL, au format compatible avec Mermaid Live) et ouverture directe dans Mermaid Live.
@@ -62,7 +64,7 @@ Le build produit un site statique dans `dist/`, déployable sur n'importe quel h
 | `Ctrl+S` | Exporter en `.mmd` |
 | `Tab` / `Entrée` | Carte mentale : idée enfant / idée sœur |
 
-Sur les canvas, on relie deux éléments en glissant depuis un point bleu ; relâcher dans le vide crée un nouvel élément relié. Dans les séquences, on crée un message en glissant d'une ligne de vie à une autre.
+Sur l'aperçu Mermaid, on relie deux éléments en glissant de l'un à l'autre (dans une carte mentale, cela déplace l'idée ; dans un Gantt, la seconde tâche démarre après la première). Sur le canvas libre, on relie en glissant depuis un point bleu, et relâcher dans le vide crée un nouvel élément relié. Dans les séquences, on crée un message en glissant d'un participant ou d'une ligne de vie à une autre.
 
 ## Fonctionnement
 
