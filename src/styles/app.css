@@ -1244,6 +1244,12 @@ textarea {
 
 /* ---------- Responsive ---------- */
 
+@media (max-width: 1180px) {
+  .brand-name {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .brand-name,
   .hide-narrow {

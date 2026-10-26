@@ -132,11 +132,10 @@ function DocItem({ doc, current, t }: { doc: DocMeta; current: boolean; t: Trans
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ width }: { width: number }) {
   const t = useT();
   const index = useDocuments((s) => s.index);
   const currentId = useDocuments((s) => s.currentId);
-  const width = useSettings((s) => s.sidebarWidth);
   const set = useSettings((s) => s.set);
   const [query, setQuery] = useState('');
   const docs = useMemo(() => {

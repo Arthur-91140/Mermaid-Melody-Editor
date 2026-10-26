@@ -80,6 +80,7 @@ export function CodeEditor() {
           lintGutter(),
           highlightField,
           EditorState.tabSize.of(4),
+          EditorView.lineWrapping,
           keymap.of([
             { key: 'Mod-z', run: () => (undo(), true), preventDefault: true },
             { key: 'Mod-y', run: () => (redo(), true), preventDefault: true },

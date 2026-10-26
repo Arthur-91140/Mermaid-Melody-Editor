@@ -34,6 +34,34 @@ function useAppTheme() {
   }, [language]);
 }
 
+function useWindowWidth(): number {
+  const [w, setW] = useState(() => window.innerWidth);
+  useEffect(() => {
+    const on = () => setW(window.innerWidth);
+    window.addEventListener('resize', on);
+    return () => window.removeEventListener('resize', on);
+  }, []);
+  return w;
+}
+
+const MIN_CENTER = 420;
+
+/** Shrinks side panels (code first) so that the canvas keeps a usable width. */
+function fitPanels(width: number, panels: { code: number; inspector: number; sidebar: number }) {
+  const out = { ...panels };
+  let excess = out.code + out.inspector + out.sidebar + MIN_CENTER - width;
+  const shrink = (key: keyof typeof out, min: number) => {
+    if (excess <= 0 || !out[key]) return;
+    const d = Math.min(excess, Math.max(0, out[key] - min));
+    out[key] -= d;
+    excess -= d;
+  };
+  shrink('code', 280);
+  shrink('inspector', 250);
+  shrink('sidebar', 190);
+  return out;
+}
+
 function isTextTarget(el: EventTarget | null): boolean {
   const node = el as HTMLElement | null;
   return !!node && (node.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(node.tagName) || !!node.closest('.cm-editor'));
@@ -110,6 +138,12 @@ export default function App() {
   useValidation();
   useGlobalShortcuts();
   const dropping = useFileDrop();
+  const winWidth = useWindowWidth();
+  const widths = fitPanels(winWidth, {
+    code: s.showCode ? s.codeWidth : 0,
+    inspector: s.showInspector ? s.inspectorWidth : 0,
+    sidebar: s.showSidebar ? s.sidebarWidth : 0,
+  });
 
   useEffect(() => {
     useDocuments.getState().init(() => {
@@ -131,23 +165,23 @@ export default function App() {
       <main className="main">
         {s.showSidebar && (
           <>
-            <Sidebar />
-            <Splitter value={s.sidebarWidth} min={180} max={420} onChange={(v) => s.set({ sidebarWidth: v })} />
+            <Sidebar width={widths.sidebar} />
+            <Splitter value={widths.sidebar} min={180} max={420} onChange={(v) => s.set({ sidebarWidth: v })} />
           </>
         )}
         {s.showCode && (
           <>
-            <section className="pane code-pane" style={{ width: s.codeWidth }}>
+            <section className="pane code-pane" style={{ width: widths.code }}>
               <CodeEditor />
             </section>
-            <Splitter value={s.codeWidth} min={240} max={900} onChange={(v) => s.set({ codeWidth: v })} />
+            <Splitter value={widths.code} min={240} max={900} onChange={(v) => s.set({ codeWidth: v })} />
           </>
         )}
         <VisualPane />
         {s.showInspector && (
           <>
-            <Splitter value={s.inspectorWidth} min={240} max={520} direction={-1} onChange={(v) => s.set({ inspectorWidth: v })} />
-            <Inspector />
+            <Splitter value={widths.inspector} min={240} max={520} direction={-1} onChange={(v) => s.set({ inspectorWidth: v })} />
+            <Inspector width={widths.inspector} />
           </>
         )}
         {dropping && (
