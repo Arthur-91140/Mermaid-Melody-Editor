@@ -93,10 +93,7 @@ export const en: Dictionary = {
   'preview.look': 'Look',
   'preview.look.classic': 'Classic',
   'preview.look.handDrawn': 'Hand-drawn',
-  'preview.editHint': 'Drag: move · corners: resize · blue dots: connect · double-click: rename · Delete: remove',
-  'preview.resize': 'Resize (Shift: keep proportions)',
-  'preview.connect': 'Drag to another element to connect them',
-  'preview.resetLayout': 'Back to Mermaid’s automatic layout',
+  'preview.editHint': 'Click: select · double-click: rename · drag from one element to another: connect · Delete: remove',
 
   'visual.unsupported': 'Visual editing is not available for this diagram type.',
   'visual.unsupportedHint': 'Edit the code on the left: the Mermaid preview updates live.',

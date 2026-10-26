@@ -64,13 +64,6 @@ export const erPreview: PreviewEditing<ErModel> = {
     return { model: addErRelation(m, a.id, b.id, t('er.newRelation')), select: [erIds.rel(m.relations.length)] };
   },
 
-  structure(m) {
-    return {
-      edges: m.relations.map((r, i) => ({ id: erIds.rel(i), from: erIds.entity(r.from), to: erIds.entity(r.to) })),
-      clusters: [],
-    };
-  },
-
   addActions: (t) => [
     {
       id: 'entity',

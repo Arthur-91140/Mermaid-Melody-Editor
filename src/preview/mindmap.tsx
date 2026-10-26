@@ -35,31 +35,6 @@ export const mindPreview: PreviewEditing<MindModel> = {
       const n = /^node_(\d+)$/.exec(cleanId(g.id))?.[1];
       if (n !== undefined && Number(n) < count) tag(g, `m${n}`);
     });
-    svg.querySelectorAll('path[data-id^="edge_"]').forEach((p) => {
-      const m2 = /^edge_(\d+)_(\d+)$/.exec(p.getAttribute('data-id') ?? '');
-      if (m2) p.setAttribute('data-mme-link', `ml:${m2[1]}:${m2[2]}`);
-    });
-  },
-
-  structure(m) {
-    const edges: { id: string; from: string; to: string }[] = [];
-    let i = 0;
-    const index = new Map<string, number>();
-    const walk = (n: MindModel['root']) => {
-      if (!n) return;
-      index.set(n.key, i++);
-      n.children.forEach(walk);
-    };
-    walk(m.root);
-    const link = (n: MindModel['root']) => {
-      if (!n) return;
-      for (const c of n.children) {
-        edges.push({ id: `ml:${index.get(n.key)}:${index.get(c.key)}`, from: `m${index.get(n.key)}`, to: `m${index.get(c.key)}` });
-        link(c);
-      }
-    };
-    link(m.root);
-    return { edges, clusters: [] };
   },
 
   textOf: (m, key) => {

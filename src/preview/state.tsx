@@ -28,16 +28,7 @@ export const statePreview: PreviewEditing<StateModel> = {
       const id = g.getAttribute('data-id');
       if (id && m.states.some((s) => s.id === id)) tag(g, stateIds.group(id));
     });
-    const noteEdgeSeen = new Map<string, number>();
-    svg.querySelectorAll('path.note-edge').forEach((p) => {
-      const target = /^(.+)-\1----note-\d+$/.exec(p.getAttribute('data-id') ?? '')?.[1];
-      if (!target) return;
-      const k = noteEdgeSeen.get(target) ?? 0;
-      noteEdgeSeen.set(target, k + 1);
-      const index = m.notes.map((n, i) => (n.target === target ? i : -1)).filter((i) => i >= 0)[k];
-      if (index !== undefined) p.setAttribute('data-mme-link', stateIds.noteLink(index));
-    });
-    svg.querySelectorAll('path.transition:not(.note-edge)').forEach((p) => {
+    svg.querySelectorAll('path.transition').forEach((p) => {
       const n = /^edge(\d+)$/.exec(p.getAttribute('data-id') ?? '')?.[1];
       if (n !== undefined && Number(n) < m.transitions.length) tag(p, stateIds.transition(Number(n)));
     });
@@ -83,24 +74,6 @@ export const statePreview: PreviewEditing<StateModel> = {
     if (a.kind !== 'state' || b.kind !== 'state') return null;
     const next = addTransition(m, a.id, b.id);
     return next === m ? null : { model: next, select: [stateIds.transition(m.transitions.length)] };
-  },
-
-  structure(m) {
-    return {
-      edges: [
-        ...m.transitions.map((tr, i) => ({ id: stateIds.transition(i), from: cidOf(m, tr.from), to: cidOf(m, tr.to) })),
-        ...m.notes.map((n, i) => ({ id: stateIds.noteLink(i), from: stateIds.note(i), to: cidOf(m, n.target) })),
-      ],
-      clusters: m.states
-        .filter((s) => s.composite)
-        .map((s) => ({
-          id: stateIds.group(s.id),
-          members: [
-            ...m.states.filter((c) => c.parent === s.id).map((c) => cidOf(m, c.id)),
-            ...m.notes.flatMap((n, i) => (n.scope === s.id ? [stateIds.note(i)] : [])),
-          ],
-        })),
-    };
   },
 
   addActions: (t) => {
