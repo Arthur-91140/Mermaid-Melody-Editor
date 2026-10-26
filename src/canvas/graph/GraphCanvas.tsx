@@ -91,6 +91,8 @@ export interface GraphCanvasProps {
   nodes: Node[];
   edges: Edge[];
   nodeTypes: NodeTypes;
+  /** Extra edge types (the floating edge is always available). */
+  edgeTypes?: EdgeTypes;
   /** Changes the canvas fit when it changes (e.g. document id). */
   fitKey: string;
   /** New top-left positions after a drag. */
@@ -155,6 +157,7 @@ function Inner(props: GraphCanvasProps) {
   const { nodes: input, edges, nodeTypes, fitKey } = props;
   const rf = useReactFlow();
   useSettings((s) => s.theme);
+  const edgeTypes = useMemo(() => ({ ...EDGE_TYPES, ...props.edgeTypes }), [props.edgeTypes]);
   const [nodes, setNodes] = useState<Node[]>(() => fitGroups(input));
   const selectedIds = useSelection((s) => s.ids);
   const propsRef = useRef(props);
@@ -338,7 +341,7 @@ function Inner(props: GraphCanvasProps) {
           nodes={nodes}
           edges={rfEdges}
           nodeTypes={nodeTypes}
-          edgeTypes={EDGE_TYPES}
+          edgeTypes={edgeTypes}
           colorMode={dark ? 'dark' : 'light'}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
