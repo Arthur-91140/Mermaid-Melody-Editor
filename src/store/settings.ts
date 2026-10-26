@@ -30,7 +30,7 @@ export const useSettings = create<SettingsState>()(
       theme: 'system',
       mermaidTheme: 'default',
       look: 'classic',
-      view: 'visual',
+      view: 'preview',
       showCode: true,
       showSidebar: typeof window === 'undefined' || window.innerWidth >= 1280,
       showInspector: true,

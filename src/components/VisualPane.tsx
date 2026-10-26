@@ -73,18 +73,18 @@ export function VisualPane() {
   const set = useSettings((s) => s.set);
   const options: { value: ViewMode; label: React.ReactNode }[] = [
     {
-      value: 'visual',
-      label: (
-        <>
-          <MousePointer2 size={14} /> <span className="hide-narrow">{t('view.visual')}</span>
-        </>
-      ),
-    },
-    {
       value: 'preview',
       label: (
         <>
           <Eye size={14} /> <span className="hide-narrow">{t('view.preview')}</span>
+        </>
+      ),
+    },
+    {
+      value: 'visual',
+      label: (
+        <>
+          <MousePointer2 size={14} /> <span className="hide-narrow">{t('view.canvas')}</span>
         </>
       ),
     },
@@ -104,7 +104,7 @@ export function VisualPane() {
       </div>
       <div className={`view-body${view === 'split' && hasEditor ? ' split' : ''}`}>
         {view !== 'preview' && <VisualArea />}
-        {(view === 'preview' || (view === 'split' && hasEditor)) && <Preview />}
+        {(view === 'preview' || (view === 'split' && hasEditor)) && <Preview exclusive={view === 'preview'} />}
       </div>
     </section>
   );
