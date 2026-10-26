@@ -1737,3 +1737,227 @@ textarea {
   font-size: 10px;
   color: var(--muted);
 }
+
+/* Sequence diagram */
+.seq-canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--canvas);
+  background-image: radial-gradient(var(--grid) 1px, transparent 1px);
+  background-size: 18px 18px;
+  cursor: grab;
+  user-select: none;
+}
+
+.seq-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+
+.seq-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.seq-head {
+  position: absolute;
+  min-height: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  background: var(--node-fill);
+  border: 1.5px solid var(--node-stroke);
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+  cursor: grab;
+  z-index: 3;
+}
+
+.seq-head.actor {
+  background: transparent;
+  border-color: transparent;
+}
+
+.seq-head.type-database {
+  border-radius: 50% / 18%;
+}
+
+.seq-head.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-weak);
+}
+
+.seq-head.actor.selected {
+  border-color: var(--accent);
+}
+
+.seq-head-type {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.seq-actor-icon {
+  color: var(--text);
+}
+
+.seq-lifeline-hit {
+  position: absolute;
+  width: 20px;
+  cursor: crosshair;
+  z-index: 1;
+}
+
+.seq-lifeline-hit:hover {
+  background: linear-gradient(90deg, transparent 8px, color-mix(in srgb, var(--accent) 35%, transparent) 8px 12px, transparent 12px);
+}
+
+.seq-msg {
+  position: absolute;
+  padding: 2px 6px;
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  cursor: grab;
+  z-index: 2;
+  border-radius: 4px;
+}
+
+.seq-msg:hover {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.seq-msg.selected {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.seq-hit {
+  position: absolute;
+  cursor: grab;
+  z-index: 2;
+}
+
+.seq-num {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.seq-note {
+  position: absolute;
+  padding: 6px 10px;
+  background: var(--note-fill);
+  border: 1px solid var(--note-stroke);
+  border-radius: 3px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  text-align: center;
+  cursor: grab;
+  z-index: 2;
+}
+
+.seq-note.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-weak);
+}
+
+.seq-block-label {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  cursor: grab;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.seq-block-kind {
+  padding: 1px 8px 1px 6px;
+  background: var(--panel-3);
+  border: 1px solid var(--border-strong);
+  clip-path: polygon(0 0, 100% 0, 100% 60%, 85% 100%, 0 100%);
+  font-weight: 700;
+}
+
+.seq-block-label.branch .seq-block-kind {
+  background: transparent;
+  border-color: transparent;
+  clip-path: none;
+  padding: 0;
+  color: var(--muted);
+}
+
+.seq-block-label.selected .seq-block-kind {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.seq-block-text {
+  color: var(--muted);
+}
+
+.seq-end {
+  position: absolute;
+  height: 8px;
+  cursor: grab;
+  z-index: 2;
+  border-radius: 4px;
+}
+
+.seq-end:hover,
+.seq-end.selected {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.seq-chip {
+  position: absolute;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--panel-3);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+  cursor: grab;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.seq-chip.raw {
+  font-family: var(--mono);
+  border-radius: 4px;
+}
+
+.seq-chip.selected {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.seq-box-label {
+  position: absolute;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
