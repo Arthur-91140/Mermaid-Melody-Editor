@@ -3,7 +3,7 @@ import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 import { bracketMatching, indentOnInput } from '@codemirror/language';
 import { lintGutter, setDiagnostics, type Diagnostic } from '@codemirror/lint';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
-import { EditorState, StateEffect, StateField } from '@codemirror/state';
+import { Compartment, EditorState, StateEffect, StateField } from '@codemirror/state';
 import {
   Decoration,
   drawSelection,
@@ -17,6 +17,7 @@ import {
 import { useEffect, useRef } from 'react';
 import { useDocuments } from '../store/documents';
 import { useSelection } from '../store/selection';
+import { useSettings } from '../store/settings';
 import { useStatus } from '../store/status';
 import { mermaidSupport } from './mermaidLanguage';
 
@@ -41,6 +42,10 @@ const highlightField = StateField.define<DecorationSet>({
 });
 
 let activeView: EditorView | null = null;
+
+/** Line wrapping, switched on and off from the status bar. */
+const wrapping = new Compartment();
+const wrapExtension = (on: boolean) => (on ? EditorView.lineWrapping : []);
 
 /** Highlights the given 1-based lines and scrolls the first one into view. */
 export function revealLines(lines: number[]) {
@@ -82,6 +87,7 @@ export function CodeEditor() {
   const applying = useRef(false);
   const code = useDocuments((s) => s.code);
   const error = useStatus((s) => s.error);
+  const wrapCode = useSettings((s) => s.wrapCode);
 
   useEffect(() => {
     if (!host.current) return;
@@ -102,7 +108,7 @@ export function CodeEditor() {
           lintGutter(),
           highlightField,
           EditorState.tabSize.of(4),
-          EditorView.lineWrapping,
+          wrapping.of(wrapExtension(useSettings.getState().wrapCode)),
           keymap.of([
             { key: 'Mod-z', run: () => (undo(), true), preventDefault: true },
             { key: 'Mod-y', run: () => (redo(), true), preventDefault: true },
@@ -130,6 +136,10 @@ export function CodeEditor() {
       view.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    view.current?.dispatch({ effects: wrapping.reconfigure(wrapExtension(wrapCode)) });
+  }, [wrapCode]);
 
   // Apply changes made elsewhere (canvas, undo, document switch) as a minimal edit.
   useEffect(() => {

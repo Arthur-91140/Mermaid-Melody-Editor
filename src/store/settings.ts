@@ -17,6 +17,8 @@ export interface SettingsState {
   showCode: boolean;
   showSidebar: boolean;
   showInspector: boolean;
+  /** Long code lines wrap instead of scrolling sideways. */
+  wrapCode: boolean;
   codeWidth: number;
   sidebarWidth: number;
   inspectorWidth: number;
@@ -34,6 +36,7 @@ export const useSettings = create<SettingsState>()(
       showCode: true,
       showSidebar: typeof window === 'undefined' || window.innerWidth >= 1280,
       showInspector: true,
+      wrapCode: true,
       codeWidth: 380,
       sidebarWidth: 240,
       inspectorWidth: 300,
