@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { DiagramModel } from '../diagrams';
 import type { Translate } from '../i18n';
 import type { Layout } from '../store/documents';
+import type { Structure } from './manual';
 
 /** Result of an edit made on the preview. */
 export interface PreviewEdit<M> {
@@ -31,6 +32,8 @@ export interface PreviewEditing<M extends DiagramModel = DiagramModel> {
   /** Drag from one element to another. */
   connect?: (model: M, from: string, to: string, t: Translate) => PreviewEdit<M> | null;
   addActions: (t: Translate) => PreviewAddAction<M>[];
+  /** Edges and groups, for diagrams whose elements can be moved and resized freely. */
+  structure?: (model: M) => Structure;
   /** Extra keyboard shortcuts (e.g. Tab / Enter in mind maps). */
   onKey?: (e: KeyboardEvent, model: M, selection: string[], t: Translate) => PreviewEdit<M> | null;
 }

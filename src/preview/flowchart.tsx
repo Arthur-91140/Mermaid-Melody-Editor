@@ -76,6 +76,21 @@ export const flowPreview: PreviewEditing<FlowModel> = {
     return { model: addEdge(m, a.id, b.id), select: [flowIds.edge(m.edges.length)] };
   },
 
+  structure(m) {
+    const groups = new Set(m.subgraphs.map((sg) => sg.id));
+    const cid = (id: string) => (groups.has(id) ? flowIds.group(id) : flowIds.node(id));
+    return {
+      edges: m.edges.map((e, i) => ({ id: flowIds.edge(i), from: cid(e.from), to: cid(e.to) })),
+      clusters: m.subgraphs.map((sg) => ({
+        id: flowIds.group(sg.id),
+        members: [
+          ...m.nodes.filter((n) => n.parent === sg.id).map((n) => flowIds.node(n.id)),
+          ...m.subgraphs.filter((x) => x.parent === sg.id).map((x) => flowIds.group(x.id)),
+        ],
+      })),
+    };
+  },
+
   addActions: (t) => [
     {
       id: 'node',

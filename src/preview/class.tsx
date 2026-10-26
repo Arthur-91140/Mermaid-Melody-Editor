@@ -28,6 +28,10 @@ export const classPreview: PreviewEditing<ClassModel> = {
       const id = cleanId(g.id);
       if (m.namespaces.includes(id)) tag(g, classIds.ns(id));
     });
+    svg.querySelectorAll('path.relation').forEach((p) => {
+      const n = /^edgeNote(\d+)$/.exec(p.getAttribute('data-id') ?? '')?.[1];
+      if (n !== undefined) p.setAttribute('data-mme-link', classIds.noteLink(Number(n)));
+    });
     const relIndex = new Map<string, number>();
     let i = 0;
     svg.querySelectorAll('path.relation').forEach((p) => {
@@ -100,6 +104,19 @@ export const classPreview: PreviewEditing<ClassModel> = {
       return { model: { ...m, notes: m.notes.map((n, i) => (i === Number(a.id) ? { ...n, target: b.id } : n)) } };
     }
     return null;
+  },
+
+  structure(m) {
+    return {
+      edges: [
+        ...m.relations.map((r, i) => ({ id: classIds.rel(i), from: classIds.cls(r.from), to: classIds.cls(r.to) })),
+        ...m.notes.flatMap((n, i) => (n.target ? [{ id: classIds.noteLink(i), from: classIds.note(i), to: classIds.cls(n.target) }] : [])),
+      ],
+      clusters: m.namespaces.map((ns) => ({
+        id: classIds.ns(ns),
+        members: m.classes.filter((c) => c.namespace === ns).map((c) => classIds.cls(c.id)),
+      })),
+    };
   },
 
   addActions: (t) => [

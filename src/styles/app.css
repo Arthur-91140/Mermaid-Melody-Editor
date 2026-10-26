@@ -2282,3 +2282,87 @@ textarea {
     visibility: hidden;
   }
 }
+
+.preview-sel {
+  position: absolute;
+  z-index: 12;
+  border: 1.5px dashed var(--accent);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.preview-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--panel);
+  border: 2px solid var(--accent);
+  border-radius: 2px;
+  pointer-events: all;
+}
+
+.preview-handle.nw {
+  left: -6px;
+  top: -6px;
+  cursor: nwse-resize;
+}
+
+.preview-handle.ne {
+  right: -6px;
+  top: -6px;
+  cursor: nesw-resize;
+}
+
+.preview-handle.sw {
+  left: -6px;
+  bottom: -6px;
+  cursor: nesw-resize;
+}
+
+.preview-handle.se {
+  right: -6px;
+  bottom: -6px;
+  cursor: nwse-resize;
+}
+
+.preview-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--panel);
+  box-shadow: var(--shadow);
+  cursor: crosshair;
+  pointer-events: all;
+  transition: transform 0.1s;
+}
+
+.preview-dot:hover {
+  transform: scale(1.3);
+}
+
+.preview-dot.n {
+  left: calc(50% + 0px);
+  top: -10px;
+}
+
+.preview-dot.s {
+  left: 50%;
+  top: calc(100% + 10px);
+}
+
+.preview-dot.w {
+  left: -10px;
+  top: 50%;
+}
+
+.preview-dot.e {
+  left: calc(100% + 10px);
+  top: 50%;
+}
+
+.preview.editable g.node[data-mme] {
+  cursor: move;
+}

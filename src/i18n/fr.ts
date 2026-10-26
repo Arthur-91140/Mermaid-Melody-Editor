@@ -91,7 +91,10 @@ export const fr = {
   'preview.look': 'Style',
   'preview.look.classic': 'Classique',
   'preview.look.handDrawn': 'Dessiné à la main',
-  'preview.editHint': 'Clic : sélectionner · double-clic : renommer · glisser d’un élément à un autre : relier · Suppr : supprimer',
+  'preview.editHint': 'Glisser : déplacer · coins : redimensionner · points bleus : relier · double-clic : renommer · Suppr : supprimer',
+  'preview.resize': 'Redimensionner (Maj : garder les proportions)',
+  'preview.connect': 'Glisser vers un autre élément pour les relier',
+  'preview.resetLayout': 'Revenir à la disposition automatique de Mermaid',
 
   'visual.unsupported': "L'édition visuelle n'est pas disponible pour ce type de diagramme.",
   'visual.unsupportedHint': "Modifie le code à gauche : l'aperçu Mermaid se met à jour en direct.",
