@@ -34,12 +34,6 @@ export function linkToken(e: FlowEdge): string {
   }
 }
 
-function edgeLine(e: FlowEdge): string {
-  const id = e.edgeId ? `${e.edgeId}@` : '';
-  const label = e.label && e.line !== 'invisible' ? `|${fmtLabel(e.label)}|` : '';
-  return `${e.from} ${id}${linkToken(e)}${label} ${e.to}`;
-}
-
 function hasDecoration(n: FlowNode): boolean {
   return n.label !== null || n.shape !== 'rect' || n.syntax === 'at';
 }
@@ -53,35 +47,79 @@ function subgraphHeader(sg: FlowSubgraph): string {
 export function serializeFlowchart(m: FlowModel): { header: string; body: string[] } {
   const header = m.keyword + (m.direction ? ` ${m.direction}` : '');
   const body: string[] = [...m.extras];
-
-  const referenced = new Set<string>();
-  for (const e of m.edges) {
-    referenced.add(e.from);
-    referenced.add(e.to);
-  }
-
-  for (const n of m.nodes) {
-    if (n.parent === null && (hasDecoration(n) || !referenced.has(n.id))) body.push(nodeDecl(n));
-  }
-
+  const nodeById = new Map(m.nodes.map((n) => [n.id, n]));
   const sgIds = new Set(m.subgraphs.map((s) => s.id));
-  const writeSubgraph = (sg: FlowSubgraph, seen: Set<string>): string[] => {
-    if (seen.has(sg.id)) return [];
-    seen.add(sg.id);
-    const inner: string[] = [];
-    if (sg.direction) inner.push(`direction ${sg.direction}`);
-    for (const n of m.nodes) if (n.parent === sg.id) inner.push(nodeDecl(n));
-    for (const child of m.subgraphs) {
-      if (child.parent === sg.id) inner.push(...writeSubgraph(child, seen));
-    }
-    return [subgraphHeader(sg), ...indent(inner), 'end'];
-  };
-  const seen = new Set<string>();
-  for (const sg of m.subgraphs) {
-    if (sg.parent === null || !sgIds.has(sg.parent)) body.push(...writeSubgraph(sg, seen));
-  }
+  const parentOf = (p: string | null) => (p && sgIds.has(p) ? p : null);
+  const referenced = new Set(m.edges.flatMap((e) => [e.from, e.to]));
 
-  for (const e of m.edges) body.push(edgeLine(e));
+  // A node's shape and label are written where it is first mentioned.
+  const written = new Set<string>();
+  const mention = (id: string): string => {
+    const n = nodeById.get(id);
+    if (!n || written.has(id)) return id;
+    written.add(id);
+    return nodeDecl(n);
+  };
+
+  /** Order in which edges are written; linkStyle indexes follow it. */
+  const order: FlowEdge[] = [];
+  const edgeLine = (e: FlowEdge): string => {
+    order.push(e);
+    const id = e.edgeId ? `${e.edgeId}@` : '';
+    const label = e.label && e.line !== 'invisible' ? `|${fmtLabel(e.label)}|` : '';
+    const from = mention(e.from);
+    return `${from} ${id}${linkToken(e)}${label} ${mention(e.to)}`;
+  };
+
+  // Edges between two direct members of a subgraph are written inside its block;
+  // every other edge is written at the top level. Edges keep their source order:
+  // a block is written where its first internal edge appears.
+  const scopeOf = (e: FlowEdge): string | null => {
+    if (sgIds.has(e.from) || sgIds.has(e.to)) return null;
+    const a = parentOf(nodeById.get(e.from)?.parent ?? null);
+    const b = parentOf(nodeById.get(e.to)?.parent ?? null);
+    return a === b ? a : null;
+  };
+  const sgParent = new Map(m.subgraphs.map((sg) => [sg.id, parentOf(sg.parent)]));
+  /** Child of `scope` on the way down to `sg` (or null when `sg` is not below `scope`). */
+  const childToward = (scope: string | null, sg: string | null): string | null => {
+    let cur = sg;
+    for (let guard = 0; cur && guard < 100; guard++) {
+      const p = sgParent.get(cur) ?? null;
+      if (p === scope) return cur;
+      cur = p;
+    }
+    return null;
+  };
+
+  const emitted = new Set<string>();
+  const writeScope = (scope: string | null): string[] => {
+    const lines: string[] = [];
+    const internal = m.edges.filter((e) => scopeOf(e) === scope);
+    const used = new Set(internal.flatMap((e) => [e.from, e.to]));
+    for (const n of m.nodes) {
+      if (parentOf(n.parent) !== scope || used.has(n.id)) continue;
+      if (scope !== null || hasDecoration(n) || !referenced.has(n.id)) lines.push(mention(n.id));
+    }
+    const writeBlock = (id: string) => {
+      if (emitted.has(id)) return;
+      emitted.add(id);
+      const sg = m.subgraphs.find((x) => x.id === id)!;
+      const inner = [...(sg.direction ? [`direction ${sg.direction}`] : []), ...writeScope(id)];
+      lines.push(subgraphHeader(sg), ...indent(inner), 'end');
+    };
+    for (const e of m.edges) {
+      const sc = scopeOf(e);
+      if (sc === scope) lines.push(edgeLine(e));
+      else {
+        const child = childToward(scope, sc);
+        if (child) writeBlock(child);
+      }
+    }
+    for (const sg of m.subgraphs) if (parentOf(sg.parent) === scope) writeBlock(sg.id);
+    return lines;
+  };
+  body.push(...writeScope(null));
   for (const e of m.edges) if (e.edgeId && e.props) body.push(`${e.edgeId}@{ ${e.props} }`);
 
   for (const cd of m.classDefs) body.push(`classDef ${cd.names} ${cd.style}`);
@@ -101,7 +139,7 @@ export function serializeFlowchart(m: FlowModel): { header: string; body: string
 
   if (m.linkStyleDefault) body.push(`linkStyle default ${m.linkStyleDefault}`);
   const byStyle = new Map<string, number[]>();
-  m.edges.forEach((e, i) => {
+  order.forEach((e, i) => {
     if (!e.style) return;
     if (!byStyle.has(e.style)) byStyle.set(e.style, []);
     byStyle.get(e.style)!.push(i);
