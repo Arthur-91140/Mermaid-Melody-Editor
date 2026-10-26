@@ -18,6 +18,21 @@ export const openDialog = (dialog: DialogName | null) => useUi.setState({ dialog
 const NARROW = '(max-width: 900px)';
 export const isNarrow = () => typeof window !== 'undefined' && window.matchMedia(NARROW).matches;
 
+const DARK = '(prefers-color-scheme: dark)';
+
+/** Whether the app is shown with its dark theme (chosen, or following the system). */
+export function useAppDark(): boolean {
+  const theme = useSettings((s) => s.theme);
+  const [systemDark, setSystemDark] = useState(() => typeof window !== 'undefined' && window.matchMedia(DARK).matches);
+  useEffect(() => {
+    const media = window.matchMedia(DARK);
+    const on = () => setSystemDark(media.matches);
+    media.addEventListener('change', on);
+    return () => media.removeEventListener('change', on);
+  }, []);
+  return theme === 'dark' || (theme === 'system' && systemDark);
+}
+
 export function useNarrow(): boolean {
   const [narrow, setNarrow] = useState(isNarrow);
   useEffect(() => {
