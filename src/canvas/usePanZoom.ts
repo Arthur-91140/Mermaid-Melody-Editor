@@ -60,12 +60,13 @@ export function usePanZoom(box: RefObject<HTMLDivElement | null>, initial: View 
     [box],
   );
 
-  /** Fits a `w` × `h` world rectangle starting at (0, 0). */
+  /** Fits a `w` × `h` world rectangle starting at (0, 0); `widthOnly` lets tall content scroll. */
   const fit = useCallback(
-    (w: number, h: number, maxK = 1) => {
+    (w: number, h: number, maxK = 1, widthOnly = false) => {
       const el = box.current;
       if (!el || !w || !h) return;
-      const k = Math.min(maxK, (el.clientWidth - 88) / w, (el.clientHeight - 48) / h);
+      const byWidth = (el.clientWidth - 88) / w;
+      const k = Math.max(0.25, Math.min(maxK, widthOnly ? byWidth : Math.min(byWidth, (el.clientHeight - 48) / h)));
       // Leaves room for the tool palette on the left.
       setView({ k, x: Math.max(64, (el.clientWidth - w * k) / 2), y: 24 });
     },

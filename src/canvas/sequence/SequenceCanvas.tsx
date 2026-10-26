@@ -86,7 +86,7 @@ export function SequenceCanvas() {
   const [drag, setDrag] = useState<Drag | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => fit(layout.width, layout.height), 30);
+    const timer = setTimeout(() => fit(layout.width, layout.height, 1, true), 30);
     return () => clearTimeout(timer);
     // Only when another document is opened.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -603,7 +603,7 @@ export function SequenceCanvas() {
           <button type="button" className="icon-btn small" title={t('canvas.zoomIn')} onClick={() => zoomBy(1.2)}>
             <Plus size={15} />
           </button>
-          <button type="button" className="icon-btn small" title={t('canvas.fit')} onClick={() => fit(layout.width, layout.height)}>
+          <button type="button" className="icon-btn small" title={t('canvas.fit')} onClick={() => fit(layout.width, layout.height, 1, true)}>
             <Maximize size={14} />
           </button>
         </div>
