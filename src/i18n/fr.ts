@@ -79,6 +79,7 @@ export const fr = {
   'status.line': 'ligne {line}',
   'status.saved': 'Enregistré',
   'status.readOnly': 'Lecture seule',
+  'status.lines': '{count} lignes',
 
   'preview.zoomIn': 'Zoom avant',
   'preview.zoomOut': 'Zoom arrière',
@@ -94,7 +95,7 @@ export const fr = {
   'visual.unsupportedHint': "Modifie le code à gauche : l'aperçu Mermaid se met à jour en direct.",
   'visual.readOnly': "Ce diagramme utilise une syntaxe que l'éditeur visuel ne sait pas conserver ({reason}). Il est affiché en lecture seule.",
   'visual.reason.concurrency': 'régions concurrentes « -- »',
-  'visual.parseError': 'Code en cours de saisie : le canvas montre la dernière version valide.',
+  'visual.parseError': 'Le code contient une erreur de syntaxe : le canvas peut être incomplet.',
 
   'canvas.fit': 'Tout afficher',
   'canvas.autoLayout': 'Réorganiser automatiquement',

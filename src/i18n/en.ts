@@ -81,6 +81,7 @@ export const en: Dictionary = {
   'status.line': 'line {line}',
   'status.saved': 'Saved',
   'status.readOnly': 'Read-only',
+  'status.lines': '{count} lines',
 
   'preview.zoomIn': 'Zoom in',
   'preview.zoomOut': 'Zoom out',
@@ -96,7 +97,7 @@ export const en: Dictionary = {
   'visual.unsupportedHint': 'Edit the code on the left: the Mermaid preview updates live.',
   'visual.readOnly': 'This diagram uses syntax the visual editor cannot keep ({reason}). It is shown read-only.',
   'visual.reason.concurrency': 'concurrent “--” regions',
-  'visual.parseError': 'Code is being typed: the canvas shows the last valid version.',
+  'visual.parseError': 'The code has a syntax error: the canvas may be incomplete.',
 
   'canvas.fit': 'Fit view',
   'canvas.autoLayout': 'Auto layout',
