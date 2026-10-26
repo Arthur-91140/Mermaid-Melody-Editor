@@ -67,7 +67,7 @@ export function autoLayout(items: LayoutItem[], links: LayoutLink[], dir: RankDi
  * Places items that have no saved position next to a connected item (in the
  * flow direction), or after everything else, without overlapping.
  */
-export function placeMissing(items: LayoutItem[], links: LayoutLink[], layout: Layout, dir: RankDir): Layout {
+export function placeMissing(items: LayoutItem[], links: LayoutLink[], layout: Layout, dir: RankDir, spacing = 1): Layout {
   const out: Layout = { ...layout };
   const leaves = items.filter((i) => !i.isGroup);
   const missing = leaves.filter((i) => !out[i.id]);
@@ -76,7 +76,7 @@ export function placeMissing(items: LayoutItem[], links: LayoutLink[], layout: L
   const boxes = (): Box[] =>
     leaves.filter((i) => out[i.id]).map((i) => ({ x: out[i.id].x, y: out[i.id].y, w: i.width, h: i.height }));
 
-  if (missing.length === leaves.length) return { ...out, ...autoLayout(items, links, dir) };
+  if (missing.length === leaves.length) return { ...out, ...autoLayout(items, links, dir, spacing) };
 
   const horizontal = dir === 'LR' || dir === 'RL';
   const forward = dir === 'TB' || dir === 'LR' ? 1 : -1;

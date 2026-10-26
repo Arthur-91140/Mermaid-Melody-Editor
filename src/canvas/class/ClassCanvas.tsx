@@ -77,7 +77,7 @@ export function ClassCanvas() {
   );
   const toCid = (key: string) =>
     key.startsWith('note:') ? key : key.startsWith('ns:') ? key : classIds.cls(key);
-  const { positions, layout, onMove, relayout, spotFor } = useGraphLayout(items, links, toRankDir(model.direction), toCid);
+  const { positions, layout, onMove, relayout, spotFor } = useGraphLayout(items, links, toRankDir(model.direction), toCid, 1.6);
 
   const { nodes, edges } = useMemo(() => {
     const groups: Node[] = model.namespaces.map((ns) => ({

@@ -8,9 +8,15 @@ import { autoLayout, freeSpot, placeMissing, type LayoutItem, type LayoutLink, t
  * items (remembered so that they stay put), plus helpers for drags and auto-layout.
  * Layout keys are model keys; `toCanvasId` maps them to canvas ids.
  */
-export function useGraphLayout(items: LayoutItem[], links: LayoutLink[], dir: RankDir, toCanvasId: (key: string) => string) {
+export function useGraphLayout(
+  items: LayoutItem[],
+  links: LayoutLink[],
+  dir: RankDir,
+  toCanvasId: (key: string) => string,
+  spacing = 1,
+) {
   const { layout, setLayout } = useDiagram();
-  const positions = useMemo(() => placeMissing(items, links, layout, dir), [items, links, layout, dir]);
+  const positions = useMemo(() => placeMissing(items, links, layout, dir, spacing), [items, links, layout, dir, spacing]);
 
   useEffect(() => {
     const added = Object.keys(positions).filter((k) => !layout[k]);
@@ -39,9 +45,9 @@ export function useGraphLayout(items: LayoutItem[], links: LayoutLink[], dir: Ra
         const s = sizes[toCanvasId(it.id)];
         return it.isGroup || !s ? it : { ...it, width: s.width, height: s.height };
       });
-      setLayout({ ...layout, ...autoLayout(measured, links, dir) }, true);
+      setLayout({ ...layout, ...autoLayout(measured, links, dir, spacing) }, true);
     },
-    [items, links, dir, layout, setLayout, toCanvasId],
+    [items, links, dir, layout, setLayout, toCanvasId, spacing],
   );
 
   /** Top-left position for a new `w` × `h` item centered on `center`, optionally moved to free space. */
