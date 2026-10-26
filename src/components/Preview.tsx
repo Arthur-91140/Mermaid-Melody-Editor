@@ -125,7 +125,8 @@ export function Preview({ exclusive = true }: PreviewProps) {
     }
     const vb = el.viewBox.baseVal;
     size.current = { w: (vb?.width || 0) + PAPER_PAD * 2, h: (vb?.height || 0) + PAPER_PAD * 2 };
-    if (needsFit.current) {
+    // A newly opened document is fitted once its own drawing is there.
+    if (needsFit.current && renderedCode === lastValid) {
       needsFit.current = false;
       fit();
     } else if (vb && (vb.x !== before.x || vb.y !== before.y)) {
@@ -135,7 +136,7 @@ export function Preview({ exclusive = true }: PreviewProps) {
     setTick((n) => n + 1);
     // `structure` is derived from the model.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [svg, interactive, editor, parsed.model, layout, fit]);
+  }, [svg, interactive, editor, parsed.model, layout, fit, renderedCode, lastValid]);
 
   // Show the selection on the drawing.
   useLayoutEffect(() => {
