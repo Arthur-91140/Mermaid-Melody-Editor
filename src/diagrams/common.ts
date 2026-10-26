@@ -201,7 +201,7 @@ export function splitStatements(lines: string[], splitSemicolons = true): Statem
         continue;
       } else if (!inQuote && braces > 0 && ch === '{') braces++;
       else if (!inQuote && braces > 0 && ch === '}') braces--;
-      else if (!inQuote && braces === 0 && ch === ';' && splitSemicolons) {
+      else if (!inQuote && braces === 0 && ch === ';' && splitSemicolons && !/#\w+$/.test(buf)) {
         flush();
         start = li;
         continue;
