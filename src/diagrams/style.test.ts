@@ -29,4 +29,8 @@ describe('style strings', () => {
       strokeWidth: '3px',
     });
   });
+
+  it('reads whether text is kept on one line', () => {
+    expect(visualStyle('fill:#fff,white-space:nowrap').whiteSpace).toBe('nowrap');
+  });
 });

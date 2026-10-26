@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { splitDocument } from '../common';
 import { parseFlowchart } from './parse';
+import { setStyle } from '../style';
+import { updateNode } from './ops';
 import { serializeFlowchart } from './serialize';
 
 function parse(code: string) {
@@ -133,6 +135,15 @@ describe('flowchart parser', () => {
     expect(m.classDefs).toEqual([{ names: 'hot', style: 'fill:#f96,stroke:#333' }]);
     expect(m.nodes.find((n) => n.id === 'B')!.click).toBe('"https://example.com" "tip"');
     expect(m.extras).toEqual(['%% a comment']);
+  });
+
+  it('writes a single-line node as a white-space style that reads back', () => {
+    const m = parse('flowchart TD\n    A["Responsable opérationnel - Salle de jeux"] --> B');
+    const a = m.nodes.find((n) => n.id === 'A')!;
+    const s = serializeFlowchart(updateNode(m, 'A', { style: setStyle(a.style, 'white-space', 'nowrap') }));
+    const code = [s.header, ...s.body].join('\n');
+    expect(code).toContain('style A white-space:nowrap');
+    expect(parse(code).nodes.find((n) => n.id === 'A')!.style).toBe('white-space:nowrap');
   });
 
   it('reads the @{ } shape syntax and inline header statements', () => {
