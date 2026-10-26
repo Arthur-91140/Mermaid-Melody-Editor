@@ -65,8 +65,9 @@ export function usePanZoom(box: RefObject<HTMLDivElement | null>, initial: View 
     (w: number, h: number, maxK = 1) => {
       const el = box.current;
       if (!el || !w || !h) return;
-      const k = Math.min(maxK, (el.clientWidth - 48) / w, (el.clientHeight - 48) / h);
-      setView({ k, x: Math.max(24, (el.clientWidth - w * k) / 2), y: 24 });
+      const k = Math.min(maxK, (el.clientWidth - 88) / w, (el.clientHeight - 48) / h);
+      // Leaves room for the tool palette on the left.
+      setView({ k, x: Math.max(64, (el.clientWidth - w * k) / 2), y: 24 });
     },
     [box],
   );
