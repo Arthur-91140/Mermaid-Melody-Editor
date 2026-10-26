@@ -6,6 +6,7 @@ import {
   MiniMap,
   ReactFlow,
   ReactFlowProvider,
+  useNodesInitialized,
   useReactFlow,
   type Edge,
   type EdgeChange,
@@ -181,6 +182,12 @@ function Inner(props: GraphCanvasProps) {
     });
   }, [input]);
 
+  // Selection set by code (new element, inspector rename…) is mirrored on the canvas.
+  useEffect(() => {
+    const sel = new Set(selectedIds);
+    setNodes((ns) => (ns.some((n) => !!n.selected !== sel.has(n.id)) ? ns.map((n) => ({ ...n, selected: sel.has(n.id) })) : ns));
+  }, [selectedIds]);
+
   const rfEdges = useMemo(() => {
     const selected = new Set(selectedIds);
     return edges.map((e) => ({ ...e, selected: selected.has(e.id) }));
@@ -199,6 +206,17 @@ function Inner(props: GraphCanvasProps) {
   }, []);
 
   const onNodesChange = useCallback((changes: NodeChange[]) => {
+    // Only user actions (click, box selection) reach this handler, so they drive the selection store.
+    const selects = changes.filter((c) => c.type === 'select');
+    if (selects.length) {
+      const sel = new Set(useSelection.getState().ids);
+      for (const c of selects) {
+        if (c.type !== 'select') continue;
+        if (c.selected) sel.add(c.id);
+        else sel.delete(c.id);
+      }
+      useSelection.getState().set([...sel]);
+    }
     setNodes((prev) => {
       let next = applyNodeChanges(changes, prev);
       // Dragging a group drags everything inside it.
@@ -216,15 +234,14 @@ function Inner(props: GraphCanvasProps) {
     });
   }, []);
 
+  // Fit the view once the nodes of a newly opened document have been measured.
   const fitted = useRef<string | null>(null);
+  const initialized = useNodesInitialized();
   useEffect(() => {
-    if (fitted.current === fitKey) return;
-    const timer = setTimeout(() => {
-      rf.fitView({ padding: 0.15, maxZoom: 1.2 });
-      fitted.current = fitKey;
-    }, 80);
-    return () => clearTimeout(timer);
-  }, [fitKey, rf, nodes.length]);
+    if (!initialized || fitted.current === fitKey) return;
+    fitted.current = fitKey;
+    setTimeout(() => rf.fitView({ padding: 0.15, maxZoom: 1.2 }), 0);
+  }, [initialized, fitKey, rf]);
 
   const onNodeDragStop = useCallback(
     (_: unknown, __: Node, dragged: Node[]) => {
@@ -346,9 +363,6 @@ function Inner(props: GraphCanvasProps) {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeDragStop={onNodeDragStop}
-          onSelectionChange={({ nodes: sn, edges: se }) =>
-            useSelection.getState().set([...sn.map((n) => n.id), ...se.map((ed) => ed.id)])
-          }
           onConnect={(c) => c.source && c.target && props.onConnect?.(c.source, c.target)}
           onConnectEnd={onConnectEnd}
           onBeforeDelete={async ({ nodes: dn, edges: de }) => {
