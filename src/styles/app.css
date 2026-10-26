@@ -1667,3 +1667,42 @@ textarea {
   padding: 0 7px;
   flex: none;
 }
+
+/* State diagram */
+.state-box {
+  min-width: 80px;
+  max-width: 300px;
+  padding: 8px 14px;
+  background: var(--node-fill);
+  border: 1.5px solid var(--node-stroke);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.state-box.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-weak);
+}
+
+.state-title {
+  font-weight: 600;
+  white-space: pre-wrap;
+}
+
+.state-desc {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid var(--node-stroke);
+  font-size: 12px;
+  color: var(--muted);
+  text-align: left;
+}
+
+.state-pseudo {
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.state-bar {
+  border-radius: 3px;
+}

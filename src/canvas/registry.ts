@@ -5,6 +5,8 @@ import { ClassInspector } from './class/ClassInspector';
 import { ErCanvas } from './er/ErCanvas';
 import { ErInspector } from './er/ErInspector';
 import { FlowCanvas } from './flowchart/FlowCanvas';
+import { StateCanvas } from './state/StateCanvas';
+import { StateInspector } from './state/StateInspector';
 import { FlowInspector } from './flowchart/FlowInspector';
 
 export interface VisualEditor {
@@ -17,4 +19,5 @@ export const VISUAL_EDITORS: Partial<Record<DiagramKind, VisualEditor>> = {
   flowchart: { Canvas: FlowCanvas, Inspector: FlowInspector },
   class: { Canvas: ClassCanvas, Inspector: ClassInspector },
   er: { Canvas: ErCanvas, Inspector: ErInspector },
+  state: { Canvas: StateCanvas, Inspector: StateInspector },
 };
