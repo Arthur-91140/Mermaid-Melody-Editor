@@ -6,7 +6,7 @@ import { useDiagram } from '../hooks/useDiagram';
 import { useT } from '../i18n';
 import { errorInfo, renderDiagram } from '../lib/mermaid';
 import { PREVIEW_EDITING } from '../preview';
-import { applyManualLayout, clusterBox, clusterElements, getTranslate, naturalSize, nodeBox, nodeElements, type Structure } from '../preview/manual';
+import { applyManualLayout, clusterElements, getTranslate, naturalSize, nodeElements, type Structure } from '../preview/manual';
 import type { PreviewEdit } from '../preview/types';
 import { PREVIEW_KEY, useDocuments, type Layout } from '../store/documents';
 import { useSelection } from '../store/selection';
@@ -346,19 +346,12 @@ export function Preview({ exclusive = true }: PreviewProps) {
     if (!interactive || !structure || selection.length !== 1 || !el || !box.current) return null;
     const id = selection[0];
     const node = nodeElements(el).get(id);
-    const cluster = node ? undefined : clusterElements(el).get(id);
-    const b = node ? nodeBox(node) : cluster ? clusterBox(cluster) : null;
-    if (!b?.w) return null;
-    // Worked out from the drawing and the view, which may not be on screen yet.
-    const vb = el.viewBox.baseVal;
-    return {
-      id,
-      resizable: !!node,
-      left: view.x + (PAPER_PAD + b.x - (vb?.x ?? 0)) * view.k,
-      top: view.y + (PAPER_PAD + b.y - (vb?.y ?? 0)) * view.k,
-      width: b.w * view.k,
-      height: b.h * view.k,
-    };
+    const target = node ?? clusterElements(el).get(id);
+    if (!target) return null;
+    const r = target.getBoundingClientRect();
+    if (!r.width) return null;
+    const p = local(r.left, r.top);
+    return { id, resizable: !!node, left: p.x, top: p.y, width: r.width, height: r.height };
   })();
 
   const savedPositions = Object.keys(layout).filter((k) => k.startsWith(PREVIEW_KEY));
