@@ -30,7 +30,8 @@ export const en: Dictionary = {
 
   'view.visual': 'Visual editor',
   'view.preview': 'Mermaid preview',
-  'view.split': 'Visual + preview',
+  'view.canvas': 'Free canvas',
+  'view.split': 'Canvas + preview',
 
   'docs.title': 'My diagrams',
   'docs.search': 'Search…',
@@ -92,6 +93,7 @@ export const en: Dictionary = {
   'preview.look': 'Look',
   'preview.look.classic': 'Classic',
   'preview.look.handDrawn': 'Hand-drawn',
+  'preview.editHint': 'Click: select · double-click: rename · drag from one element to another: connect · Delete: remove',
 
   'visual.unsupported': 'Visual editing is not available for this diagram type.',
   'visual.unsupportedHint': 'Edit the code on the left: the Mermaid preview updates live.',

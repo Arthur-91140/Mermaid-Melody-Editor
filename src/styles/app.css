@@ -2219,3 +2219,46 @@ textarea {
   color: var(--danger);
   white-space: nowrap;
 }
+
+/* Editable Mermaid preview */
+.preview.editable [data-mme] {
+  cursor: pointer;
+}
+
+.preview.editable [data-mme]:hover {
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 65%, transparent));
+}
+
+.preview [data-mme].mme-sel {
+  filter: drop-shadow(0 0 1.5px var(--accent)) drop-shadow(0 0 4px var(--accent));
+}
+
+.preview-link {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.preview-link line {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.preview-link circle {
+  fill: var(--accent);
+}
+
+.preview-inline {
+  position: absolute;
+  z-index: 20;
+  font-size: 13px;
+}
+
+.preview .palette {
+  left: 12px;
+  top: 12px;
+}
