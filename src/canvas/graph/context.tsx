@@ -48,10 +48,9 @@ export function EditableText({ id, text, className, multiline = true, placeholde
   useEffect(() => {
     if (!active) return;
     setDraft(text);
-    requestAnimationFrame(() => {
-      ref.current?.focus();
-      ref.current?.select();
-    });
+    // The textarea is mounted by now; focusing right away also works in background tabs.
+    ref.current?.focus();
+    ref.current?.select();
   }, [active, text]);
 
   if (!active) {
