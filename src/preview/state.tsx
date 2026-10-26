@@ -2,7 +2,8 @@ import { Circle, CircleDot, Diamond, Square } from 'lucide-react';
 import { stateIds } from '../canvas/state/ids';
 import { stateDisplay, type StateKind, type StateModel } from '../diagrams/state/model';
 import { addState, addTransition, deleteStateItems, setStateTitle, updateTransition } from '../diagrams/state/ops';
-import { cleanId, renameKey, tag, type PreviewEditing } from './types';
+import { renameLayoutId } from '../store/documents';
+import { cleanId, tag, type PreviewEditing } from './types';
 
 const cidOf = (m: StateModel, id: string) =>
   m.states.find((s) => s.id === id)?.composite ? stateIds.group(id) : stateIds.state(id);
@@ -54,7 +55,7 @@ export const statePreview: PreviewEditing<StateModel> = {
     if (p.kind === 'transition') return { model: updateTransition(m, Number(p.id), { label: text.trim() || null }) };
     const res = setStateTitle(m, p.id, text);
     if (res.model === m) return null;
-    return { model: res.model, layout: renameKey(layout, p.id, res.id), select: res.id !== p.id ? [cidOf(res.model, res.id)] : undefined };
+    return { model: res.model, layout: renameLayoutId(layout, p.id, res.id), select: res.id !== p.id ? [cidOf(res.model, res.id)] : undefined };
   },
 
   remove(m, ids) {

@@ -20,7 +20,7 @@ import { setStyle } from '../../diagrams/style';
 import { useDiagram } from '../../hooks/useDiagram';
 import { ClassChips, classDefNames, ClassDefsEditor, DeleteButton, IdField, Section, StyleEditor } from '../../inspector/common';
 import { tryT, useT, type TranslationKey } from '../../i18n';
-import type { Layout } from '../../store/documents';
+import { renameLayoutId } from '../../store/documents';
 import { useSelection } from '../../store/selection';
 import { Check, ColorField, DraftInput, DraftTextarea, Field, Segmented, Select } from '../../ui/fields';
 import { ShapeIcon } from './FlowShape';
@@ -28,11 +28,6 @@ import { flowIds } from './ids';
 
 const DIRECTIONS = ['TB', 'BT', 'LR', 'RL'] as const;
 
-function renameLayout(layout: Layout, from: string, to: string): Layout {
-  if (!layout[from]) return layout;
-  const { [from]: pos, ...rest } = layout;
-  return { ...rest, [to]: pos };
-}
 
 function ShapePicker({ value, onPick }: { value: string; onPick: (shape: string) => void }) {
   const t = useT();
@@ -99,7 +94,7 @@ function NodePanel({ id }: { id: string }) {
           value={n.id}
           isTaken={(v) => isTaken(model, v)}
           onCommit={(v) => {
-            apply(renameId(model, n.id, v), renameLayout(layout, n.id, v));
+            apply(renameId(model, n.id, v), renameLayoutId(layout, n.id, v));
             useSelection.getState().set([flowIds.node(v)]);
           }}
         />
@@ -243,7 +238,7 @@ function GroupPanel({ id }: { id: string }) {
             value={sg.id}
             isTaken={(v) => isTaken(model, v)}
             onCommit={(v) => {
-              apply(renameId(model, sg.id, v), renameLayout(layout, sg.id, v));
+              apply(renameId(model, sg.id, v), renameLayoutId(layout, sg.id, v));
               useSelection.getState().set([flowIds.group(v)]);
             }}
           />

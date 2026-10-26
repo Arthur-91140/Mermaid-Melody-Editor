@@ -16,7 +16,7 @@ import {
 import { classStyles, visualStyle } from '../../diagrams/style';
 import { useDiagram } from '../../hooks/useDiagram';
 import { useT } from '../../i18n';
-import { useDocuments, type Layout, type Pos } from '../../store/documents';
+import { renameLayoutId, useDocuments, type Pos } from '../../store/documents';
 import { useSelection } from '../../store/selection';
 import { startEditing } from '../graph/context';
 import { assignBends, type FloatingEdgeData } from '../graph/FloatingEdge';
@@ -193,11 +193,6 @@ export function StateCanvas() {
     if (kind === 'state') setTimeout(() => startEditing(id), 60);
   };
 
-  const renameKey = (l: Layout, from: string, to: string): Layout => {
-    if (from === to || !l[from]) return l;
-    const { [from]: p, ...rest } = l;
-    return { ...rest, [to]: p };
-  };
 
   const modelKey = (c: string): string | null => {
     const p = stateIds.parse(c);
@@ -275,7 +270,7 @@ export function StateCanvas() {
         if (p.kind === 'state') {
           const res = setStateTitle(model, p.id, text);
           if (res.model === model) return;
-          apply(res.model, renameKey(layout, p.id, res.id));
+          apply(res.model, renameLayoutId(layout, p.id, res.id));
           if (res.id !== p.id) {
             const composite = model.states.find((x) => x.id === p.id)?.composite;
             useSelection.getState().set([composite ? stateIds.group(res.id) : stateIds.state(res.id)]);

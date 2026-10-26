@@ -48,3 +48,17 @@ describe('documents store', () => {
     expect(useDocuments.getState().currentId).toBe(b);
   });
 });
+
+describe('layout renaming', () => {
+  it('moves both canvas and preview positions to the new id', async () => {
+    const { renameLayoutId } = await import('./documents');
+    const layout = { A: { x: 1, y: 2 }, 'pv:n:A': { x: 3, y: 4, w: 50 }, 'pv:n:AB': { x: 5, y: 6 }, B: { x: 7, y: 8 } };
+    expect(renameLayoutId(layout, 'A', 'Start')).toEqual({
+      Start: { x: 1, y: 2 },
+      'pv:n:Start': { x: 3, y: 4, w: 50 },
+      'pv:n:AB': { x: 5, y: 6 },
+      B: { x: 7, y: 8 },
+    });
+    expect(renameLayoutId(layout, 'Z', 'Y')).toBe(layout);
+  });
+});

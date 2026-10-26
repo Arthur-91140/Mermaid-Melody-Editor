@@ -12,7 +12,8 @@ import {
   updateClass,
   updateRelation,
 } from '../diagrams/class/ops';
-import { cleanId, renameKey, tag, type PreviewEditing } from './types';
+import { renameLayoutId } from '../store/documents';
+import { cleanId, tag, type PreviewEditing } from './types';
 
 export const classPreview: PreviewEditing<ClassModel> = {
   annotate(svg, m) {
@@ -63,7 +64,7 @@ export const classPreview: PreviewEditing<ClassModel> = {
       if (CLASS_ID_RE.test(value) && !classTaken(m, value)) {
         return {
           model: updateClass(renameClass(m, p.id, value), value, { label: null }),
-          layout: renameKey(layout, p.id, value),
+          layout: renameLayoutId(layout, p.id, value),
           select: [classIds.cls(value)],
         };
       }
@@ -75,7 +76,7 @@ export const classPreview: PreviewEditing<ClassModel> = {
     }
     if (p.kind === 'relation') return { model: updateRelation(m, Number(p.id), { label: value || null }) };
     if (p.kind === 'namespace' && /^[\w.]+$/.test(value)) {
-      return { model: renameNamespace(m, p.id, value), layout: renameKey(layout, `ns:${p.id}`, `ns:${value}`), select: [classIds.ns(value)] };
+      return { model: renameNamespace(m, p.id, value), layout: renameLayoutId(layout, `ns:${p.id}`, `ns:${value}`), select: [classIds.ns(value)] };
     }
     return null;
   },

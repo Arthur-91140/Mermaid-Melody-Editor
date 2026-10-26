@@ -21,7 +21,7 @@ import {
 import { classStyles, visualStyle } from '../../diagrams/style';
 import { useDiagram } from '../../hooks/useDiagram';
 import { useT } from '../../i18n';
-import { useDocuments, type Layout, type Pos } from '../../store/documents';
+import { renameLayoutId, useDocuments, type Pos } from '../../store/documents';
 import { useSelection } from '../../store/selection';
 import { startEditing } from '../graph/context';
 import { assignBends, type FloatingEdgeData } from '../graph/FloatingEdge';
@@ -172,11 +172,6 @@ export function ClassCanvas() {
     }
   };
 
-  const renameLayoutKey = (l: Layout, from: string, to: string): Layout => {
-    if (!l[from]) return l;
-    const { [from]: p, ...rest } = l;
-    return { ...rest, [to]: p };
-  };
 
   return (
     <GraphCanvas
@@ -246,7 +241,7 @@ export function ClassCanvas() {
           const c = model.classes.find((x) => x.id === p.id);
           if (!c || !value) return;
           if (CLASS_ID_RE.test(value) && !classTaken(model, value)) {
-            apply(updateClass(renameClass(model, p.id, value), value, { label: null }), renameLayoutKey(layout, p.id, value));
+            apply(updateClass(renameClass(model, p.id, value), value, { label: null }), renameLayoutId(layout, p.id, value));
             useSelection.getState().set([classIds.cls(value)]);
           } else if (value !== c.id) apply(updateClass(model, p.id, { label: value }));
         } else if (p.kind === 'note') {
@@ -255,7 +250,7 @@ export function ClassCanvas() {
         } else if (p.kind === 'relation') {
           apply(updateRelation(model, Number(p.id), { label: value || null }));
         } else if (p.kind === 'namespace' && /^[\w.]+$/.test(value)) {
-          apply(renameNamespace(model, p.id, value), renameLayoutKey(layout, nsKey(p.id), nsKey(value)));
+          apply(renameNamespace(model, p.id, value), renameLayoutId(layout, nsKey(p.id), nsKey(value)));
         }
       }}
       onAutoLayout={relayout}

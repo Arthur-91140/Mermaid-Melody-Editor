@@ -5,8 +5,32 @@ import { readJson, safeStorage, writeJson } from '../lib/storage';
 export interface Pos {
   x: number;
   y: number;
+  /** Size set by the user on the Mermaid preview. */
+  w?: number;
+  h?: number;
 }
 export type Layout = Record<string, Pos>;
+
+/** Prefix of the positions set on the Mermaid preview, keyed by canvas id (e.g. `pv:n:A`). */
+export const PREVIEW_KEY = 'pv:';
+
+/**
+ * Renames an element in a layout: its canvas position (`from`) and its preview
+ * position (a `pv:` key whose canvas id ends with `:from`).
+ */
+export function renameLayoutId(layout: Layout, from: string, to: string): Layout {
+  if (from === to) return layout;
+  let changed = false;
+  const out: Layout = {};
+  for (const [k, v] of Object.entries(layout)) {
+    let key = k;
+    if (k === from) key = to;
+    else if (k.startsWith(PREVIEW_KEY) && k.endsWith(`:${from}`)) key = k.slice(0, k.length - from.length) + to;
+    if (key !== k) changed = true;
+    out[key] = v;
+  }
+  return changed ? out : layout;
+}
 
 export interface DocMeta {
   id: string;

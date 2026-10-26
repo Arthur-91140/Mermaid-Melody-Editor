@@ -12,16 +12,11 @@ import {
 import { useDiagram } from '../../hooks/useDiagram';
 import { useT, type TranslationKey } from '../../i18n';
 import { ClassChips, classDefNames, ClassDefsEditor, DeleteButton, IdField, Section, StyleEditor } from '../../inspector/common';
-import type { Layout } from '../../store/documents';
+import { renameLayoutId } from '../../store/documents';
 import { useSelection } from '../../store/selection';
 import { Check, DraftInput, DraftTextarea, Field, Segmented, Select } from '../../ui/fields';
 import { stateIds } from './ids';
 
-function renameKey(l: Layout, from: string, to: string): Layout {
-  if (!l[from]) return l;
-  const { [from]: p, ...rest } = l;
-  return { ...rest, [to]: p };
-}
 
 function stateLabel(m: StateModel, id: string, t: (k: TranslationKey) => string): string {
   const s = m.states.find((x) => x.id === id);
@@ -56,7 +51,7 @@ function StatePanel({ id }: { id: string }) {
           pattern={STATE_ID_RE}
           isTaken={(v) => stateTaken(model, v)}
           onCommit={(v) => {
-            apply(renameState(model, s.id, v), renameKey(layout, s.id, v));
+            apply(renameState(model, s.id, v), renameLayoutId(layout, s.id, v));
             useSelection.getState().set([s.composite ? stateIds.group(v) : stateIds.state(v)]);
           }}
         />

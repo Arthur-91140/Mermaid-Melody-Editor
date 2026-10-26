@@ -16,7 +16,7 @@ import {
 import { classStyles, textColorFor, visualStyle, type VisualStyle } from '../../diagrams/style';
 import { useDiagram } from '../../hooks/useDiagram';
 import { useT } from '../../i18n';
-import { useDocuments, type Layout, type Pos } from '../../store/documents';
+import { renameLayoutId, useDocuments, type Pos } from '../../store/documents';
 import { useSelection } from '../../store/selection';
 import { EditableText, NodeHandles, startEditing } from '../graph/context';
 import { assignBends, type FloatingEdgeData } from '../graph/FloatingEdge';
@@ -112,11 +112,6 @@ export function ErCanvas() {
     return { nodes, edges: assignBends(edges) };
   }, [model, positions]);
 
-  const renameKey = (l: Layout, from: string, to: string): Layout => {
-    if (!l[from]) return l;
-    const { [from]: p, ...rest } = l;
-    return { ...rest, [to]: p };
-  };
 
   const addAt = (_payload: string, pos: Pos, free: boolean) => {
     const res = addEntity(model, t('er.newEntity'), [{ type: 'int', name: 'id', keys: ['PK'], comment: null }]);
@@ -170,7 +165,7 @@ export function ErCanvas() {
           return;
         }
         if (ENTITY_ID_RE.test(value) && !entityTaken(model, value)) {
-          apply(updateEntity(renameEntity(model, p.id, value), value, { alias: null }), renameKey(layout, p.id, value));
+          apply(updateEntity(renameEntity(model, p.id, value), value, { alias: null }), renameLayoutId(layout, p.id, value));
           useSelection.getState().set([erIds.entity(value)]);
         } else if (value !== p.id) apply(updateEntity(model, p.id, { alias: value }));
       }}

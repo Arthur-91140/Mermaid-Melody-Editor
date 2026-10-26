@@ -18,7 +18,7 @@ import {
 import { useDiagram } from '../../hooks/useDiagram';
 import { useT, type TranslationKey } from '../../i18n';
 import { ClassChips, classDefNames, ClassDefsEditor, DeleteButton, IdField, Section, StyleEditor } from '../../inspector/common';
-import type { Layout } from '../../store/documents';
+import { renameLayoutId } from '../../store/documents';
 import { useSelection } from '../../store/selection';
 import { DraftInput, DraftTextarea, Field, Segmented, Select } from '../../ui/fields';
 import { classIds } from './ids';
@@ -26,11 +26,6 @@ import { classIds } from './ids';
 const MARKERS: ClassMarker[] = ['none', 'arrow', 'inheritance', 'composition', 'aggregation'];
 const DIRECTIONS = ['TB', 'BT', 'LR', 'RL'];
 
-function renameKey(l: Layout, from: string, to: string): Layout {
-  if (!l[from]) return l;
-  const { [from]: p, ...rest } = l;
-  return { ...rest, [to]: p };
-}
 
 function ClassPanel({ id }: { id: string }) {
   const t = useT();
@@ -45,7 +40,7 @@ function ClassPanel({ id }: { id: string }) {
           pattern={CLASS_ID_RE}
           isTaken={(v) => classTaken(model, v)}
           onCommit={(v) => {
-            apply(renameClass(model, c.id, v), renameKey(layout, c.id, v));
+            apply(renameClass(model, c.id, v), renameLayoutId(layout, c.id, v));
             useSelection.getState().set([classIds.cls(v)]);
           }}
         />
@@ -229,7 +224,7 @@ function NamespacePanel({ name }: { name: string }) {
           pattern={/^[\w.]+$/}
           isTaken={(v) => model.namespaces.includes(v) || model.classes.some((c) => c.id === v)}
           onCommit={(v) => {
-            apply(renameNamespace(model, name, v), renameKey(layout, `ns:${name}`, `ns:${v}`));
+            apply(renameNamespace(model, name, v), renameLayoutId(layout, `ns:${name}`, `ns:${v}`));
             useSelection.getState().set([classIds.ns(v)]);
           }}
         />

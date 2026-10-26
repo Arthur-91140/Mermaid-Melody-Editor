@@ -44,11 +44,6 @@ export function tag(el: Element | null | undefined, id: string) {
   if (el) el.setAttribute('data-mme', id);
 }
 
-export function renameKey(layout: Layout, from: string, to: string): Layout {
-  if (from === to || !layout[from]) return layout;
-  const { [from]: p, ...rest } = layout;
-  return { ...rest, [to]: p };
-}
 
 /** Adds an invisible rectangle over a thin element (stick figure, line) so that it is easy to click. */
 export function addHitArea(el: Element, id: string, pad = 6) {

@@ -12,18 +12,13 @@ import {
 import { useDiagram } from '../../hooks/useDiagram';
 import { useT, type TranslationKey } from '../../i18n';
 import { ClassChips, classDefNames, ClassDefsEditor, DeleteButton, IdField, Section, StyleEditor } from '../../inspector/common';
-import type { Layout } from '../../store/documents';
+import { renameLayoutId } from '../../store/documents';
 import { useSelection } from '../../store/selection';
 import { Check, DraftInput, Field, Segmented, Select } from '../../ui/fields';
 import { erIds } from './ids';
 
 const KEYS = ['PK', 'FK', 'UK'];
 
-function renameKey(l: Layout, from: string, to: string): Layout {
-  if (!l[from]) return l;
-  const { [from]: p, ...rest } = l;
-  return { ...rest, [to]: p };
-}
 
 function AttributesEditor({ attributes, onChange }: { attributes: ErAttribute[]; onChange: (a: ErAttribute[]) => void }) {
   const t = useT();
@@ -81,7 +76,7 @@ function EntityPanel({ id }: { id: string }) {
           pattern={ENTITY_ID_RE}
           isTaken={(v) => entityTaken(model, v)}
           onCommit={(v) => {
-            apply(renameEntity(model, e.id, v), renameKey(layout, e.id, v));
+            apply(renameEntity(model, e.id, v), renameLayoutId(layout, e.id, v));
             useSelection.getState().set([erIds.entity(v)]);
           }}
         />

@@ -2,7 +2,8 @@ import { Table } from 'lucide-react';
 import { erIds } from '../canvas/er/ids';
 import type { ErModel } from '../diagrams/er/model';
 import { addEntity, addErRelation, deleteErItems, ENTITY_ID_RE, entityTaken, renameEntity, updateEntity, updateErRelation } from '../diagrams/er/ops';
-import { cleanId, renameKey, tag, type PreviewEditing } from './types';
+import { renameLayoutId } from '../store/documents';
+import { cleanId, tag, type PreviewEditing } from './types';
 
 export const erPreview: PreviewEditing<ErModel> = {
   annotate(svg, m) {
@@ -40,7 +41,7 @@ export const erPreview: PreviewEditing<ErModel> = {
     if (ENTITY_ID_RE.test(value) && !entityTaken(m, value)) {
       return {
         model: updateEntity(renameEntity(m, p.id, value), value, { alias: null }),
-        layout: renameKey(layout, p.id, value),
+        layout: renameLayoutId(layout, p.id, value),
         select: [erIds.entity(value)],
       };
     }
