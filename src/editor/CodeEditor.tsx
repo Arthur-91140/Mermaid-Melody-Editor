@@ -16,6 +16,7 @@ import {
 } from '@codemirror/view';
 import { useEffect, useRef } from 'react';
 import { useDocuments } from '../store/documents';
+import { useSelection } from '../store/selection';
 import { useStatus } from '../store/status';
 import { mermaidSupport } from './mermaidLanguage';
 
@@ -54,7 +55,28 @@ export function revealLines(lines: number[]) {
   });
 }
 
+/** Model id behind a canvas selection id, for the kinds whose id appears in the code. */
+function referencedWord(cid: string): string | null {
+  const m = /^(n|g|c|en|s|sg|p):(.+)$/.exec(cid);
+  return m ? m[2] : null;
+}
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Highlights the code lines mentioning the elements selected on the canvas. */
+function useSelectionHighlight() {
+  const ids = useSelection((s) => s.ids);
+  useEffect(() => {
+    const words = ids.map(referencedWord).filter((w): w is string => !!w);
+    if (!words.length) return revealLines([]);
+    const re = new RegExp(`(^|[^\\p{L}\\p{N}_-])(${words.map(escapeRe).join('|')})(?=$|[^\\p{L}\\p{N}_-])`, 'u');
+    const lines = useDocuments.getState().code.split('\n');
+    revealLines(lines.flatMap((l, i) => (i > 0 && !l.trim().startsWith('%%') && re.test(l) ? [i + 1] : [])));
+  }, [ids]);
+}
+
 export function CodeEditor() {
+  useSelectionHighlight();
   const host = useRef<HTMLDivElement>(null);
   const view = useRef<EditorView | null>(null);
   const applying = useRef(false);
