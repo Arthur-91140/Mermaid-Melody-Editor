@@ -5,6 +5,8 @@ import { ClassInspector } from './class/ClassInspector';
 import { ErCanvas } from './er/ErCanvas';
 import { ErInspector } from './er/ErInspector';
 import { FlowCanvas } from './flowchart/FlowCanvas';
+import { GanttCanvas } from './gantt/GanttCanvas';
+import { GanttInspector } from './gantt/GanttInspector';
 import { MindCanvas } from './mindmap/MindCanvas';
 import { MindInspector } from './mindmap/MindInspector';
 import { SequenceCanvas } from './sequence/SequenceCanvas';
@@ -26,4 +28,5 @@ export const VISUAL_EDITORS: Partial<Record<DiagramKind, VisualEditor>> = {
   state: { Canvas: StateCanvas, Inspector: StateInspector },
   mindmap: { Canvas: MindCanvas, Inspector: MindInspector },
   sequence: { Canvas: SequenceCanvas, Inspector: SequenceInspector },
+  gantt: { Canvas: GanttCanvas, Inspector: GanttInspector },
 };
