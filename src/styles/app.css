@@ -2272,4 +2272,13 @@ textarea {
   white-space: normal;
   text-align: center;
   border-radius: 10px;
+  /* Shown briefly so that it does not hide the bottom of the drawing. */
+  animation: hint-out 0.5s ease 8s forwards;
+}
+
+@keyframes hint-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
