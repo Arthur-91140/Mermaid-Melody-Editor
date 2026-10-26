@@ -1,1 +1,1 @@
-# mermaid-melody-editor
+# Mermaid-Melody-Editor
