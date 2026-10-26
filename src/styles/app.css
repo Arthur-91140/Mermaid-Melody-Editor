@@ -1549,6 +1549,16 @@ textarea {
   max-width: 340px;
 }
 
+/* Text kept on one line (white-space:nowrap in Mermaid). */
+.flow-node.nowrap,
+.flow-node.nowrap .flow-node-label {
+  max-width: none;
+}
+
+.flow-node.nowrap .flow-node-label {
+  white-space: pre;
+}
+
 .flow-node.square {
   border-radius: 50%;
 }

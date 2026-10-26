@@ -16,7 +16,7 @@ import {
   updateSubgraph,
 } from '../../diagrams/flowchart/ops';
 import { EXTRA_SHAPES, PALETTE_SHAPES } from '../../diagrams/flowchart/shapes';
-import { setStyle } from '../../diagrams/style';
+import { classStyles, getStyle, setStyle } from '../../diagrams/style';
 import { useDiagram } from '../../hooks/useDiagram';
 import { ClassChips, classDefNames, ClassDefsEditor, DeleteButton, IdField, Section, StyleEditor } from '../../inspector/common';
 import { tryT, useT, type TranslationKey } from '../../i18n';
@@ -87,6 +87,9 @@ function NodePanel({ id }: { id: string }) {
   if (!n) return null;
   const markdown = isMarkdownLabel(n.label);
   const url = urlOf(n.click);
+  // Classes may already keep the text on one line; the node's own style comes last.
+  const inherited = classStyles(model.classDefs, n.classes).reduce((v, s) => getStyle(s, 'white-space') || v, '');
+  const singleLine = (getStyle(n.style, 'white-space') || inherited) === 'nowrap';
   return (
     <>
       <Section title={t('flow.node')} icon={<Square size={14} />}>
@@ -109,6 +112,14 @@ function NodePanel({ id }: { id: string }) {
           checked={markdown}
           label={t('inspector.markdown')}
           onChange={(on) => apply(updateNode(model, id, { label: displayToLabel(labelToDisplay(n.label ?? n.id), on) }))}
+        />
+        <Check
+          checked={singleLine}
+          label={t('flow.singleLine')}
+          onChange={(on) => {
+            const own = on ? (inherited === 'nowrap' ? null : 'nowrap') : inherited === 'nowrap' ? 'normal' : null;
+            apply(updateNode(model, id, { style: setStyle(n.style, 'white-space', own) }));
+          }}
         />
         <ShapePicker value={n.shape} onPick={(s) => apply(setShape(model, id, s))} />
         <ParentSelect model={model} value={n.parent} onChange={(p) => apply(reparent(model, [id], p))} />

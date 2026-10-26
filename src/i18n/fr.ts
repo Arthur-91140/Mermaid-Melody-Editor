@@ -129,6 +129,7 @@ export const fr = {
   'inspector.idInvalid': 'Lettres, chiffres, _ et - uniquement',
   'inspector.label': 'Texte',
   'inspector.markdown': 'Texte Markdown',
+  'flow.singleLine': 'Texte sur une seule ligne',
   'inspector.shape': 'Forme',
   'inspector.style': 'Style',
   'inspector.fill': 'Remplissage',

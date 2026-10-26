@@ -32,7 +32,7 @@ export function FlowNodeView({ id, data, selected, width, height }: NodeProps<Fl
   const w = width ?? 0;
   const h = height ?? 0;
   return (
-    <div className={`flow-node${selected ? ' selected' : ''}${info.square ? ' square' : ''}`} style={style}>
+    <div className={`flow-node${selected ? ' selected' : ''}${info.square ? ' square' : ''}${v.whiteSpace === 'nowrap' ? ' nowrap' : ''}`} style={style}>
       {w > 0 && h > 0 && (
         <svg className="flow-node-svg" width={w} height={h} aria-hidden="true">
           {shapeElements(data.shape, w, h, {

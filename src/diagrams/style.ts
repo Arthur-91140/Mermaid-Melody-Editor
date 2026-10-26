@@ -52,6 +52,7 @@ export interface VisualStyle {
   color?: string;
   fontWeight?: string;
   fontStyle?: string;
+  whiteSpace?: string;
 }
 
 export function visualStyle(...styles: (string | null | undefined)[]): VisualStyle {
@@ -79,6 +80,9 @@ export function visualStyle(...styles: (string | null | undefined)[]): VisualSty
           break;
         case 'font-style':
           out.fontStyle = v;
+          break;
+        case 'white-space':
+          out.whiteSpace = v;
           break;
       }
     }

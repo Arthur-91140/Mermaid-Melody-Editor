@@ -131,6 +131,7 @@ export const en: Dictionary = {
   'inspector.idInvalid': 'Letters, digits, _ and - only',
   'inspector.label': 'Text',
   'inspector.markdown': 'Markdown text',
+  'flow.singleLine': 'Text on a single line',
   'inspector.shape': 'Shape',
   'inspector.style': 'Style',
   'inspector.fill': 'Fill',
