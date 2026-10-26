@@ -181,7 +181,7 @@ export function ColorField({ value, onCommit, placeholder }: { value: string; on
   };
   return (
     <div className="color-field">
-      <input type="color" value={toPickerValue(draft)} onChange={(e) => schedule(e.target.value)} />
+      <input type="color" value={toPickerValue(draft || placeholder || '')} onChange={(e) => schedule(e.target.value)} />
       <input
         className="input"
         value={draft}
