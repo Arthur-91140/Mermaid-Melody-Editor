@@ -287,25 +287,32 @@ function Inner(props: GraphCanvasProps) {
     [],
   );
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.target as HTMLElement).closest('input, textarea')) return;
-    const mod = e.ctrlKey || e.metaKey;
-    const ids = useSelection.getState().ids;
-    if (e.key === 'F2' && ids.length === 1) {
-      e.preventDefault();
-      callbacks.setEditing(ids[0]);
-    } else if (mod && e.key.toLowerCase() === 'd' && ids.length) {
-      e.preventDefault();
-      propsRef.current.onDuplicate?.(ids.filter((id) => nodes.some((n) => n.id === id)));
-    } else if (mod && e.key.toLowerCase() === 'a') {
-      e.preventDefault();
-      useSelection.getState().set([...nodes.map((n) => n.id), ...edges.map((ed) => ed.id)]);
-      setNodes((ns) => ns.map((n) => ({ ...n, selected: true })));
-    } else if (e.key === 'Escape') {
-      useSelection.getState().clear();
-      setNodes((ns) => ns.map((n) => (n.selected ? { ...n, selected: false } : n)));
-    }
-  };
+  // Canvas shortcuts work whenever focus is not in a text field.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"], .cm-editor, .dialog')) return;
+      const mod = e.ctrlKey || e.metaKey;
+      const ids = useSelection.getState().ids;
+      const all = rf.getNodes();
+      if (e.key === 'F2' && ids.length === 1) {
+        e.preventDefault();
+        callbacks.setEditing(ids[0]);
+      } else if (mod && e.key.toLowerCase() === 'd' && ids.length) {
+        e.preventDefault();
+        propsRef.current.onDuplicate?.(ids.filter((id) => all.some((n) => n.id === id)));
+      } else if (mod && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        useSelection.getState().set([...all.map((n) => n.id), ...rf.getEdges().map((ed) => ed.id)]);
+        setNodes((ns) => ns.map((n) => ({ ...n, selected: true })));
+      } else if (e.key === 'Escape' && ids.length) {
+        useSelection.getState().clear();
+        setNodes((ns) => ns.map((n) => (n.selected ? { ...n, selected: false } : n)));
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [rf, callbacks]);
 
   const dark = document.documentElement.dataset.theme === 'dark';
 
@@ -313,8 +320,6 @@ function Inner(props: GraphCanvasProps) {
     <GraphContext.Provider value={callbacks}>
       <div
         className="graph-canvas"
-        tabIndex={-1}
-        onKeyDown={onKeyDown}
         onDragOver={(e) => {
           if (e.dataTransfer.types.includes(DRAG_MIME)) {
             e.preventDefault();

@@ -26,23 +26,13 @@ import { assignBends, type EdgeLine, type FloatingEdgeData } from '../graph/Floa
 import { estimateText } from '../graph/geometry';
 import { DRAG_MIME, GraphCanvas } from '../graph/GraphCanvas';
 import { GroupNode } from '../graph/GroupNode';
-import { autoLayout, placeMissing, toRankDir, type LayoutItem } from '../graph/layout';
+import { autoLayout, freeSpot, placeMissing, toRankDir, type LayoutItem } from '../graph/layout';
 import type { MarkerName } from '../graph/markers';
 import { ShapeIcon, shapeInfo } from './FlowShape';
 import { FlowNodeView } from './FlowNodeView';
+import { flowIds } from './ids';
 
 const NODE_TYPES: NodeTypes = { flow: FlowNodeView, mmeGroup: GroupNode };
-
-export const flowIds = {
-  node: (id: string) => `n:${id}`,
-  group: (id: string) => `g:${id}`,
-  edge: (i: number) => `e:${i}`,
-  /** Splits a canvas id into its kind and model id. */
-  parse(cid: string): { kind: 'node' | 'group' | 'edge'; id: string } {
-    const kind = cid.startsWith('g:') ? 'group' : cid.startsWith('e:') ? 'edge' : 'node';
-    return { kind, id: cid.slice(2) };
-  },
-};
 
 const MARKERS: Record<FlowEdge['head'], MarkerName | null> = { none: null, arrow: 'arrow', circle: 'circle', cross: 'cross' };
 const LINES: Record<FlowEdge['line'], EdgeLine> = { solid: 'solid', dotted: 'dashed', thick: 'thick', invisible: 'invisible' };
@@ -66,14 +56,14 @@ function layoutItems(m: FlowModel): LayoutItem[] {
   ];
 }
 
-function Palette({ onAdd }: { onAdd: (payload: string, pos: Pos) => void }) {
+function Palette({ onAdd }: { onAdd: (payload: string, pos: Pos, free?: boolean) => void }) {
   const t = useT();
   const rf = useReactFlow();
   const center = (): Pos => {
     const el = document.querySelector('.graph-canvas');
     const r = el?.getBoundingClientRect();
     const p = rf.screenToFlowPosition({ x: (r?.left ?? 0) + (r?.width ?? 600) / 2, y: (r?.top ?? 0) + (r?.height ?? 400) / 2 });
-    return { x: p.x + (Math.random() - 0.5) * 40, y: p.y + (Math.random() - 0.5) * 40 };
+    return p;
   };
   const item = (payload: string, title: string, icon: React.ReactNode) => (
     <button
@@ -86,7 +76,10 @@ function Palette({ onAdd }: { onAdd: (payload: string, pos: Pos) => void }) {
         e.dataTransfer.setData(DRAG_MIME, payload);
         e.dataTransfer.effectAllowed = 'copy';
       }}
-      onClick={() => onAdd(payload, center())}
+      onClick={(e) => {
+        e.currentTarget.blur();
+        onAdd(payload, center(), true);
+      }}
     >
       {icon}
     </button>
@@ -116,7 +109,7 @@ function Palette({ onAdd }: { onAdd: (payload: string, pos: Pos) => void }) {
                 }}
                 onClick={() => {
                   close();
-                  onAdd(`shape:${s}`, center());
+                  onAdd(`shape:${s}`, center(), true);
                 }}
               >
                 <ShapeIcon shape={s} size={15} />
@@ -216,14 +209,21 @@ export function FlowCanvas() {
 
   const modelId = (canvasId: string) => flowIds.parse(canvasId).id;
 
-  const addAt = (payload: string, pos: Pos) => {
+  const occupied = () =>
+    items
+      .filter((it) => !it.isGroup && positions[it.id])
+      .map((it) => ({ x: positions[it.id].x, y: positions[it.id].y, w: it.width, h: it.height }));
+
+  /** Adds a palette item centered on `pos`; `free` moves it to the nearest empty spot. */
+  const addAt = (payload: string, pos: Pos, free = false) => {
     if (payload === 'subgraph') {
       const id = nextSubgraphId(model);
       const next: FlowModel = {
         ...model,
         subgraphs: [...model.subgraphs, { id, title: t('flow.newSubgraph'), implicitId: false, direction: null, parent: null, classes: [], style: null }],
       };
-      apply(next, { ...layout, [id]: { x: Math.round(pos.x - 100), y: Math.round(pos.y - 55) } });
+      const at = { x: Math.round(pos.x - 100), y: Math.round(pos.y - 55) };
+      apply(next, { ...layout, [id]: free ? freeSpot(at, 200, 110, occupied()) : at });
       useSelection.getState().set([flowIds.group(id)]);
       return;
     }
@@ -231,7 +231,8 @@ export function FlowCanvas() {
     const label = shapeInfo(shape).noLabel ? null : t('flow.newNode');
     const res = addNode(model, { shape, label });
     const size = nodeSize(shape, label ?? '');
-    apply(res.model, { ...layout, [res.id]: { x: Math.round(pos.x - size.width / 2), y: Math.round(pos.y - size.height / 2) } });
+    const at = { x: Math.round(pos.x - size.width / 2), y: Math.round(pos.y - size.height / 2) };
+    apply(res.model, { ...layout, [res.id]: free ? freeSpot(at, size.width, size.height, occupied()) : at });
     useSelection.getState().set([flowIds.node(res.id)]);
     if (label) setTimeout(() => startEditing(flowIds.node(res.id)), 60);
   };

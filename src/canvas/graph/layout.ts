@@ -113,3 +113,18 @@ export function placeMissing(items: LayoutItem[], links: LayoutLink[], layout: L
   }
   return out;
 }
+
+/** Nearest top-left position around `pos` where a `w` × `h` box does not overlap `boxes`. */
+export function freeSpot(pos: Pos, w: number, h: number, boxes: Box[], gap = 24): Pos {
+  const fits = (p: Pos) => !boxes.some((b) => boxesOverlap({ x: p.x, y: p.y, w, h }, b, gap));
+  if (fits(pos)) return pos;
+  const step = Math.max(40, Math.min(w, h));
+  for (let ring = 1; ring < 30; ring++) {
+    for (let i = 0; i < ring * 8; i++) {
+      const a = (i / (ring * 8)) * Math.PI * 2;
+      const p = { x: Math.round(pos.x + Math.cos(a) * ring * step), y: Math.round(pos.y + Math.sin(a) * ring * step) };
+      if (fits(p)) return p;
+    }
+  }
+  return pos;
+}
