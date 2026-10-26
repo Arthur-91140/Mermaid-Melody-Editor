@@ -1,6 +1,6 @@
 import type { Node, NodeProps } from '@xyflow/react';
 import type { CSSProperties } from 'react';
-import type { VisualStyle } from '../../diagrams/style';
+import { textColorFor, type VisualStyle } from '../../diagrams/style';
 import { EditableText, NodeHandles } from '../graph/context';
 import type { Boundary } from '../graph/geometry';
 import { shapeElements, shapeInfo } from './FlowShape';
@@ -25,7 +25,7 @@ export function FlowNodeView({ id, data, selected, width, height }: NodeProps<Fl
           padding: info.padding,
           minWidth: info.minWidth,
           aspectRatio: info.square ? '1' : undefined,
-          color: v.color,
+          color: textColorFor(v),
           fontWeight: v.fontWeight,
           fontStyle: v.fontStyle,
         };

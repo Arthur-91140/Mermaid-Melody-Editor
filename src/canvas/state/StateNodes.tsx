@@ -1,6 +1,6 @@
 import type { Node, NodeProps } from '@xyflow/react';
 import type { StateKind } from '../../diagrams/state/model';
-import type { VisualStyle } from '../../diagrams/style';
+import { textColorFor, type VisualStyle } from '../../diagrams/style';
 import { EditableText, NodeHandles } from '../graph/context';
 import type { Boundary } from '../graph/geometry';
 
@@ -57,7 +57,7 @@ export function StateNodeView({ id, data, selected }: NodeProps<StateNodeType>) 
       return (
         <div
           className={`state-box${selected ? ' selected' : ''}`}
-          style={{ background: v.fill, borderColor: selected ? undefined : v.stroke, color: v.color, borderStyle: v.strokeDasharray ? 'dashed' : undefined }}
+          style={{ background: v.fill, borderColor: selected ? undefined : v.stroke, color: textColorFor(v), borderStyle: v.strokeDasharray ? 'dashed' : undefined }}
         >
           <NodeHandles />
           <EditableText id={id} text={data.title} multiline={false} className="state-title" />

@@ -13,7 +13,7 @@ import {
   updateEntity,
   updateErRelation,
 } from '../../diagrams/er/ops';
-import { classStyles, visualStyle, type VisualStyle } from '../../diagrams/style';
+import { classStyles, textColorFor, visualStyle, type VisualStyle } from '../../diagrams/style';
 import { useDiagram } from '../../hooks/useDiagram';
 import { useT } from '../../i18n';
 import { useDocuments, type Layout, type Pos } from '../../store/documents';
@@ -38,7 +38,7 @@ interface EntityData extends Record<string, unknown> {
 function EntityNode({ id, data, selected }: NodeProps<Node<EntityData, 'entity'>>) {
   const v = data.visual;
   return (
-    <div className={`er-entity${selected ? ' selected' : ''}`} style={{ background: v.fill, borderColor: selected ? undefined : v.stroke, color: v.color }}>
+    <div className={`er-entity${selected ? ' selected' : ''}`} style={{ background: v.fill, borderColor: selected ? undefined : v.stroke, color: textColorFor(v) }}>
       <NodeHandles />
       <div className="er-head">
         <EditableText id={id} text={data.name} multiline={false} />

@@ -1,5 +1,5 @@
 import type { Node, NodeProps } from '@xyflow/react';
-import type { VisualStyle } from '../../diagrams/style';
+import { textColorFor, type VisualStyle } from '../../diagrams/style';
 import { EditableText, NodeHandles } from '../graph/context';
 
 export interface MemberView {
@@ -32,7 +32,7 @@ export function ClassNodeView({ id, data, selected }: NodeProps<ClassNodeType>) 
   return (
     <div
       className={`uml-class${selected ? ' selected' : ''}`}
-      style={{ background: v.fill, borderColor: selected ? undefined : v.stroke, color: v.color, borderStyle: v.strokeDasharray ? 'dashed' : undefined }}
+      style={{ background: v.fill, borderColor: selected ? undefined : v.stroke, color: textColorFor(v), borderStyle: v.strokeDasharray ? 'dashed' : undefined }}
     >
       <NodeHandles />
       <div className="uml-head">

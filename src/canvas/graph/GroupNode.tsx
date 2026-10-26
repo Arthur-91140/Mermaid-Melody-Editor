@@ -1,5 +1,5 @@
 import type { Node, NodeProps } from '@xyflow/react';
-import type { VisualStyle } from '../../diagrams/style';
+import { textColorFor, type VisualStyle } from '../../diagrams/style';
 import { EditableText, NodeHandles } from './context';
 import type { GroupData } from './GraphCanvas';
 
@@ -22,12 +22,12 @@ export function GroupNode({ id, data }: NodeProps<GroupNodeType>) {
         background: v.fill,
         borderColor: v.stroke,
         borderStyle: v.stroke ? 'solid' : undefined,
-        color: v.color,
+        color: textColorFor(v),
         borderRadius: data.rounded ? 16 : undefined,
       }}
     >
       {data.connectable && <NodeHandles />}
-      <div className="mme-group-title" style={{ color: v.color }}>
+      <div className="mme-group-title" style={{ color: textColorFor(v) }}>
         <EditableText id={id} text={data.title} multiline={false} />
       </div>
     </div>
