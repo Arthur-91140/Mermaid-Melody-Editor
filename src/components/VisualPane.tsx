@@ -1,4 +1,5 @@
 import { Columns2, Eye, MousePointer2, TriangleAlert } from 'lucide-react';
+import { Suspense } from 'react';
 import { VISUAL_EDITORS } from '../canvas/registry';
 import { useParsed } from '../hooks/useDiagram';
 import { tryT, useT } from '../i18n';
@@ -56,7 +57,9 @@ function VisualArea() {
         </div>
       )}
       <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
-        <Canvas />
+        <Suspense fallback={null}>
+          <Canvas />
+        </Suspense>
       </div>
     </div>
   );

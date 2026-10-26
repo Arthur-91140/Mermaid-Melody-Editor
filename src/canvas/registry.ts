@@ -1,32 +1,44 @@
-import type { ComponentType } from 'react';
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react';
 import type { DiagramKind } from '../diagrams/common';
-import { ClassCanvas } from './class/ClassCanvas';
-import { ClassInspector } from './class/ClassInspector';
-import { ErCanvas } from './er/ErCanvas';
-import { ErInspector } from './er/ErInspector';
-import { FlowCanvas } from './flowchart/FlowCanvas';
-import { GanttCanvas } from './gantt/GanttCanvas';
-import { GanttInspector } from './gantt/GanttInspector';
-import { MindCanvas } from './mindmap/MindCanvas';
-import { MindInspector } from './mindmap/MindInspector';
-import { SequenceCanvas } from './sequence/SequenceCanvas';
-import { SequenceInspector } from './sequence/SequenceInspector';
-import { StateCanvas } from './state/StateCanvas';
-import { StateInspector } from './state/StateInspector';
-import { FlowInspector } from './flowchart/FlowInspector';
 
 export interface VisualEditor {
-  Canvas: ComponentType;
-  Inspector: ComponentType;
+  Canvas: LazyExoticComponent<ComponentType>;
+  Inspector: LazyExoticComponent<ComponentType>;
+}
+
+/** Loads a named export lazily so that each editor ships in its own chunk. */
+function load<K extends string>(loader: () => Promise<Record<K, ComponentType>>, name: K) {
+  return lazy(() => loader().then((m) => ({ default: m[name] })));
 }
 
 /** Visual editors by diagram type; types missing here fall back to the Mermaid preview. */
 export const VISUAL_EDITORS: Partial<Record<DiagramKind, VisualEditor>> = {
-  flowchart: { Canvas: FlowCanvas, Inspector: FlowInspector },
-  class: { Canvas: ClassCanvas, Inspector: ClassInspector },
-  er: { Canvas: ErCanvas, Inspector: ErInspector },
-  state: { Canvas: StateCanvas, Inspector: StateInspector },
-  mindmap: { Canvas: MindCanvas, Inspector: MindInspector },
-  sequence: { Canvas: SequenceCanvas, Inspector: SequenceInspector },
-  gantt: { Canvas: GanttCanvas, Inspector: GanttInspector },
+  flowchart: {
+    Canvas: load(() => import('./flowchart/FlowCanvas'), 'FlowCanvas'),
+    Inspector: load(() => import('./flowchart/FlowInspector'), 'FlowInspector'),
+  },
+  class: {
+    Canvas: load(() => import('./class/ClassCanvas'), 'ClassCanvas'),
+    Inspector: load(() => import('./class/ClassInspector'), 'ClassInspector'),
+  },
+  er: {
+    Canvas: load(() => import('./er/ErCanvas'), 'ErCanvas'),
+    Inspector: load(() => import('./er/ErInspector'), 'ErInspector'),
+  },
+  state: {
+    Canvas: load(() => import('./state/StateCanvas'), 'StateCanvas'),
+    Inspector: load(() => import('./state/StateInspector'), 'StateInspector'),
+  },
+  mindmap: {
+    Canvas: load(() => import('./mindmap/MindCanvas'), 'MindCanvas'),
+    Inspector: load(() => import('./mindmap/MindInspector'), 'MindInspector'),
+  },
+  sequence: {
+    Canvas: load(() => import('./sequence/SequenceCanvas'), 'SequenceCanvas'),
+    Inspector: load(() => import('./sequence/SequenceInspector'), 'SequenceInspector'),
+  },
+  gantt: {
+    Canvas: load(() => import('./gantt/GanttCanvas'), 'GanttCanvas'),
+    Inspector: load(() => import('./gantt/GanttInspector'), 'GanttInspector'),
+  },
 };

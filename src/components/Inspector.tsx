@@ -1,4 +1,5 @@
 import { PanelRightClose } from 'lucide-react';
+import { Suspense } from 'react';
 import { VISUAL_EDITORS } from '../canvas/registry';
 import { useParsed } from '../hooks/useDiagram';
 import { useT } from '../i18n';
@@ -19,7 +20,15 @@ export function Inspector({ width }: { width: number }) {
           <PanelRightClose size={15} />
         </button>
       </div>
-      <div className="pane-body">{Body ? <Body /> : <div className="inspector-empty">{t('inspector.nothing')}</div>}</div>
+      <div className="pane-body">
+        {Body ? (
+          <Suspense fallback={null}>
+            <Body />
+          </Suspense>
+        ) : (
+          <div className="inspector-empty">{t('inspector.nothing')}</div>
+        )}
+      </div>
     </aside>
   );
 }
