@@ -37,6 +37,16 @@
   --note-fill: #fff7c2;
   --note-stroke: #e3cf6b;
 
+  --hl-heading: #5b4cf0;
+  --hl-keyword: #b4296b;
+  --hl-comment: #8c8c9c;
+  --hl-meta: #8a6d1e;
+  --hl-string: #1f7a4d;
+  --hl-operator: #c2410c;
+  --hl-number: #0b6bcb;
+  --hl-class: #7e3fbf;
+  --hl-bracket: #6b6b7b;
+
   color-scheme: light;
 }
 
@@ -73,6 +83,16 @@
   --cluster-stroke: #8a7a3a;
   --note-fill: #3a3416;
   --note-stroke: #7d6f2a;
+
+  --hl-heading: #a89dff;
+  --hl-keyword: #ff7ab2;
+  --hl-comment: #7a7a8e;
+  --hl-meta: #d9b45a;
+  --hl-string: #6fd6a0;
+  --hl-operator: #ffa45c;
+  --hl-number: #6cb6ff;
+  --hl-class: #d0a2ff;
+  --hl-bracket: #9a9aac;
 
   color-scheme: dark;
 }
