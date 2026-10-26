@@ -4,7 +4,12 @@ import { detectLanguage, type Language } from '../i18n';
 import { safeStorage } from '../lib/storage';
 
 export type AppTheme = 'light' | 'dark' | 'system';
-export type MermaidTheme = 'default' | 'neutral' | 'dark' | 'forest' | 'base';
+/** Every theme Mermaid provides, light ones first. */
+export const LIGHT_MERMAID_THEMES = ['redux-color', 'redux', 'neo', 'default', 'neutral', 'forest', 'base'] as const;
+export const DARK_MERMAID_THEMES = ['redux-dark-color', 'redux-dark', 'neo-dark', 'dark'] as const;
+export type MermaidTheme = (typeof LIGHT_MERMAID_THEMES)[number] | (typeof DARK_MERMAID_THEMES)[number];
+
+export const isDarkMermaidTheme = (theme: MermaidTheme): boolean => (DARK_MERMAID_THEMES as readonly string[]).includes(theme);
 export type MermaidLook = 'classic' | 'handDrawn';
 export type ViewMode = 'visual' | 'preview' | 'split';
 
@@ -30,7 +35,7 @@ export const useSettings = create<SettingsState>()(
     (set) => ({
       language: detectLanguage(),
       theme: 'system',
-      mermaidTheme: 'default',
+      mermaidTheme: 'redux-color',
       look: 'classic',
       view: 'preview',
       showCode: true,
@@ -44,6 +49,13 @@ export const useSettings = create<SettingsState>()(
     }),
     {
       name: 'mme:settings',
+      version: 1,
+      // Version 1 makes redux-color the default theme instead of Mermaid's former default.
+      migrate: (persisted, version) => {
+        const state = persisted as Partial<SettingsState>;
+        if (version < 1 && state.mermaidTheme === 'default') state.mermaidTheme = 'redux-color';
+        return state as SettingsState;
+      },
       storage: createJSONStorage(() => ({
         getItem: safeStorage.getItem,
         setItem: (k: string, v: string) => void safeStorage.setItem(k, v),

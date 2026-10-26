@@ -29,7 +29,7 @@ import { copyAs, copyShareLink, exportAs, importFiles, openInMermaidLive } from 
 import { useParsed } from '../hooks/useDiagram';
 import { useT, type TranslationKey } from '../i18n';
 import { useDocuments } from '../store/documents';
-import { useSettings, type AppTheme, type MermaidLook, type MermaidTheme } from '../store/settings';
+import { DARK_MERMAID_THEMES, LIGHT_MERMAID_THEMES, useSettings, type AppTheme, type MermaidLook } from '../store/settings';
 import { Menu, MenuItem, MenuLabel, MenuSep } from '../ui/Menu';
 import { KindIcon } from './KindIcon';
 
@@ -143,7 +143,12 @@ function AppearanceItems({ close }: { close: Close }) {
       })}
       <MenuSep />
       <MenuLabel>{t('preview.theme')}</MenuLabel>
-      {(['default', 'neutral', 'forest', 'dark', 'base'] as MermaidTheme[]).map((th) => (
+      {LIGHT_MERMAID_THEMES.map((th) => (
+        <MenuItem key={th} close={close} checked={settings.mermaidTheme === th} label={th} onSelect={() => settings.set({ mermaidTheme: th })} />
+      ))}
+      <MenuSep />
+      <MenuLabel>{t('preview.darkThemes')}</MenuLabel>
+      {DARK_MERMAID_THEMES.map((th) => (
         <MenuItem key={th} close={close} checked={settings.mermaidTheme === th} label={th} onSelect={() => settings.set({ mermaidTheme: th })} />
       ))}
       <MenuSep />

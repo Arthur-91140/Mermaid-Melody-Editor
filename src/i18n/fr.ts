@@ -91,6 +91,7 @@ export const fr = {
   'preview.error': 'Mermaid ne peut pas afficher ce diagramme',
   'preview.lastValid': 'Dernier rendu valide affiché',
   'preview.theme': 'Thème Mermaid',
+  'preview.darkThemes': 'Thèmes Mermaid sombres',
   'preview.look': 'Style',
   'preview.look.classic': 'Classique',
   'preview.look.handDrawn': 'Dessiné à la main',

@@ -93,6 +93,7 @@ export const en: Dictionary = {
   'preview.error': 'Mermaid cannot render this diagram',
   'preview.lastValid': 'Showing the last valid render',
   'preview.theme': 'Mermaid theme',
+  'preview.darkThemes': 'Dark Mermaid themes',
   'preview.look': 'Look',
   'preview.look.classic': 'Classic',
   'preview.look.handDrawn': 'Hand-drawn',
