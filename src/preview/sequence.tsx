@@ -13,7 +13,7 @@ import {
   updateItem,
   updateParticipant,
 } from '../diagrams/sequence/ops';
-import { tag, type PreviewEditing } from './types';
+import { addHitArea, tag, type PreviewEditing } from './types';
 
 const display = (s: string) => decodeEntities(s.replace(/<br\s*\/?>/gi, '\n'));
 const encode = (s: string) => s.replace(/\r?\n/g, '<br>').replace(/;/g, '#59;').replace(/#(?!\w+;)/g, '#35;');
@@ -34,6 +34,8 @@ export const sequencePreview: PreviewEditing<SeqModel> = {
       const prev = el.previousElementSibling?.getAttribute('data-mme');
       if (prev) tag(el, prev);
     });
+    // Stick figures and lifelines are thin strokes: give them a comfortable hit area.
+    svg.querySelectorAll('g.actor-man[data-mme], line.actor-line[data-mme]').forEach((el) => addHitArea(el, el.getAttribute('data-mme')!));
     const messages = indexesOf(m, (it) => it.t === 'message');
     svg.querySelectorAll('[class^="messageLine"]').forEach((el, k) => messages[k] !== undefined && tag(el, seqIds.item(messages[k])));
     svg.querySelectorAll('text.messageText').forEach((el, k) => messages[k] !== undefined && tag(el, seqIds.item(messages[k])));

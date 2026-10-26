@@ -117,14 +117,21 @@ export function Preview({ exclusive = true }: PreviewProps) {
     }
   }, [svg, fit]);
 
-  // Tag the drawing with model ids, then show the selection on it.
+  // Tag the drawing with model ids.
   useLayoutEffect(() => {
     const el = svgEl();
     if (!el) return;
+    el.querySelectorAll('.mme-hit').forEach((n) => n.remove());
     el.querySelectorAll('[data-mme]').forEach((n) => n.removeAttribute('data-mme'));
     if (interactive && editor && parsed.model) editor.annotate(el, parsed.model);
+  }, [svg, interactive, editor, parsed.model]);
+
+  // Show the selection on the drawing.
+  useLayoutEffect(() => {
     const sel = new Set(selection);
-    el.querySelectorAll('[data-mme]').forEach((n) => n.classList.toggle('mme-sel', sel.has(n.getAttribute('data-mme')!)));
+    svgEl()
+      ?.querySelectorAll('[data-mme]')
+      .forEach((n) => n.classList.toggle('mme-sel', sel.has(n.getAttribute('data-mme')!)));
   }, [svg, interactive, editor, parsed.model, selection]);
 
   useEffect(() => {

@@ -49,3 +49,23 @@ export function renameKey(layout: Layout, from: string, to: string): Layout {
   const { [from]: p, ...rest } = layout;
   return { ...rest, [to]: p };
 }
+
+/** Adds an invisible rectangle over a thin element (stick figure, line) so that it is easy to click. */
+export function addHitArea(el: Element, id: string, pad = 6) {
+  const g = el as SVGGraphicsElement;
+  if (typeof g.getBBox !== 'function') return;
+  const b = g.getBBox();
+  if (!b.width && !b.height) return;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', String(b.x - pad));
+  rect.setAttribute('y', String(b.y - pad));
+  rect.setAttribute('width', String(b.width + pad * 2));
+  rect.setAttribute('height', String(b.height + pad * 2));
+  rect.setAttribute('fill', 'transparent');
+  rect.setAttribute('pointer-events', 'all');
+  rect.setAttribute('data-mme', id);
+  rect.classList.add('mme-hit');
+  // Inside groups the area goes last; next to a line it keeps the line's stacking order.
+  if (el.tagName === 'g') el.appendChild(rect);
+  else el.parentNode?.insertBefore(rect, el.nextSibling);
+}
