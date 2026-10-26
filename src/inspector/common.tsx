@@ -135,3 +135,38 @@ export function ClassChips({ available, active, onToggle }: { available: string[
 export function classDefNames(defs: { names: string }[]): string[] {
   return [...new Set(defs.flatMap((d) => d.names.split(',').map((n) => n.trim())))].filter((n) => n && n !== 'default');
 }
+
+type ClassDef = { names: string; style: string };
+
+/** Edits the `classDef` lines of a diagram. */
+export function ClassDefsEditor({ defs, onChange }: { defs: ClassDef[]; onChange: (defs: ClassDef[]) => void }) {
+  const t = useT();
+  const set = (i: number, patch: Partial<ClassDef>) => onChange(defs.map((cd, k) => (k === i ? { ...cd, ...patch } : cd)));
+  return (
+    <div className="list-editor">
+      {defs.map((cd, i) => (
+        <div key={i} className="list-row">
+          <div style={{ width: 80, flex: 'none' }}>
+            <DraftInput mono value={cd.names} onCommit={(v) => v.trim() && set(i, { names: v.trim() })} />
+          </div>
+          <DraftInput mono value={cd.style} onCommit={(v) => set(i, { style: v.trim() })} />
+          <button type="button" className="icon-btn small" title={t('common.remove')} onClick={() => onChange(defs.filter((_, k) => k !== i))}>
+            ×
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="btn ghost small"
+        onClick={() => {
+          let n = defs.length + 1;
+          const names = new Set(classDefNames(defs));
+          while (names.has(`style${n}`)) n++;
+          onChange([...defs, { names: `style${n}`, style: 'fill:#fde68a,stroke:#d97706' }]);
+        }}
+      >
+        + classDef
+      </button>
+    </div>
+  );
+}

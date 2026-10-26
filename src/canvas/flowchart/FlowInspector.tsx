@@ -18,7 +18,7 @@ import {
 import { EXTRA_SHAPES, PALETTE_SHAPES } from '../../diagrams/flowchart/shapes';
 import { setStyle } from '../../diagrams/style';
 import { useDiagram } from '../../hooks/useDiagram';
-import { ClassChips, classDefNames, DeleteButton, IdField, Section, StyleEditor } from '../../inspector/common';
+import { ClassChips, classDefNames, ClassDefsEditor, DeleteButton, IdField, Section, StyleEditor } from '../../inspector/common';
 import { tryT, useT, type TranslationKey } from '../../i18n';
 import type { Layout } from '../../store/documents';
 import { useSelection } from '../../store/selection';
@@ -341,45 +341,6 @@ function MultiPanel({ ids }: { ids: string[] }) {
   );
 }
 
-function ClassDefsEditor() {
-  const t = useT();
-  const { model, apply } = useDiagram<FlowModel>();
-  const set = (i: number, patch: Partial<{ names: string; style: string }>) =>
-    apply({ ...model, classDefs: model.classDefs.map((cd, k) => (k === i ? { ...cd, ...patch } : cd)) });
-  return (
-    <div className="list-editor">
-      {model.classDefs.map((cd, i) => (
-        <div key={i} className="list-row">
-          <div style={{ width: 90, flex: 'none' }}>
-            <DraftInput mono value={cd.names} onCommit={(v) => v.trim() && set(i, { names: v.trim() })} />
-          </div>
-          <DraftInput mono value={cd.style} onCommit={(v) => set(i, { style: v.trim() })} />
-          <button
-            type="button"
-            className="icon-btn small"
-            title={t('common.remove')}
-            onClick={() => apply({ ...model, classDefs: model.classDefs.filter((_, k) => k !== i) })}
-          >
-            ×
-          </button>
-        </div>
-      ))}
-      <button
-        type="button"
-        className="btn ghost small"
-        onClick={() => {
-          let n = model.classDefs.length + 1;
-          const names = new Set(classDefNames(model.classDefs));
-          while (names.has(`style${n}`)) n++;
-          apply({ ...model, classDefs: [...model.classDefs, { names: `style${n}`, style: 'fill:#fde68a,stroke:#d97706' }] });
-        }}
-      >
-        + classDef
-      </button>
-    </div>
-  );
-}
-
 function DiagramPanel() {
   const t = useT();
   const { model, apply } = useDiagram<FlowModel>();
@@ -402,7 +363,7 @@ function DiagramPanel() {
         </p>
       </Section>
       <Section title="classDef">
-        <ClassDefsEditor />
+        <ClassDefsEditor defs={model.classDefs} onChange={(classDefs) => apply({ ...model, classDefs })} />
       </Section>
     </>
   );
