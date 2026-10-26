@@ -15,7 +15,7 @@ import { errorInfo } from './lib/mermaid';
 import { decodeShare, mermaidLiveUrl, shareUrl } from './lib/share';
 import { useDocuments } from './store/documents';
 import { useSelection } from './store/selection';
-import { useSettings } from './store/settings';
+import { isDarkMermaidTheme, useSettings } from './store/settings';
 import { templateCode, type TemplateKind } from './templates';
 import { toast } from './ui/toast';
 
@@ -94,7 +94,7 @@ export async function exportAs(format: ExportFormat) {
         break;
       case 'png': {
         file = `${base}.png`;
-        const bg = useSettings.getState().mermaidTheme === 'dark' ? '#1f2020' : '#ffffff';
+        const bg = isDarkMermaidTheme(useSettings.getState().mermaidTheme) ? '#1f2020' : '#ffffff';
         downloadBlob(await exportPng(code, renderOptions(), bg), file);
         break;
       }

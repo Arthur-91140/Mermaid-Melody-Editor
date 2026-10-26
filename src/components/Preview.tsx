@@ -9,7 +9,7 @@ import { PREVIEW_EDITING } from '../preview';
 import type { PreviewEdit } from '../preview/types';
 import { useDocuments } from '../store/documents';
 import { useSelection } from '../store/selection';
-import { useSettings } from '../store/settings';
+import { isDarkMermaidTheme, useSettings } from '../store/settings';
 import { useStatus } from '../store/status';
 
 interface View {
@@ -287,7 +287,7 @@ export function Preview({ exclusive = true }: PreviewProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [exclusive, editor, parsed.model, apply, run, t]);
 
-  const dark = mermaidTheme === 'dark';
+  const dark = isDarkMermaidTheme(mermaidTheme);
   const message = syntaxError?.message ?? renderError;
 
   return (
