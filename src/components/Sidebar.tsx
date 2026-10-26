@@ -4,7 +4,7 @@ import { newDocument, openDocument } from '../actions';
 import { useT, type Translate } from '../i18n';
 import { useDocuments, type DocMeta } from '../store/documents';
 import { useSettings } from '../store/settings';
-import { openDialog } from '../store/ui';
+import { closePanel, openDialog } from '../store/ui';
 import { Menu, MenuItem, MenuSep } from '../ui/Menu';
 import { KindIcon } from './KindIcon';
 
@@ -136,7 +136,6 @@ export function Sidebar({ width }: { width: number }) {
   const t = useT();
   const index = useDocuments((s) => s.index);
   const currentId = useDocuments((s) => s.currentId);
-  const set = useSettings((s) => s.set);
   const [query, setQuery] = useState('');
   const docs = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -152,7 +151,7 @@ export function Sidebar({ width }: { width: number }) {
         <button type="button" className="icon-btn small" title={t('docs.new')} onClick={() => openDialog('new')}>
           <Plus size={16} />
         </button>
-        <button type="button" className="icon-btn small" title={t('top.docs')} onClick={() => set({ showSidebar: false })}>
+        <button type="button" className="icon-btn small" title={t('top.docs')} onClick={() => closePanel('docs')}>
           <PanelLeftClose size={15} />
         </button>
       </div>

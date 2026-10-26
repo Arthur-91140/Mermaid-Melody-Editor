@@ -13,6 +13,7 @@ import { translate, useT } from './i18n';
 import { useDocuments } from './store/documents';
 import { useSettings } from './store/settings';
 import { templateCode } from './templates';
+import { usePanelVisible } from './store/ui';
 import { Splitter } from './ui/Splitter';
 import { Toasts } from './ui/toast';
 
@@ -139,10 +140,13 @@ export default function App() {
   useGlobalShortcuts();
   const dropping = useFileDrop();
   const winWidth = useWindowWidth();
+  const showCode = usePanelVisible('code');
+  const showInspector = usePanelVisible('inspector');
+  const showSidebar = usePanelVisible('docs');
   const widths = fitPanels(winWidth, {
-    code: s.showCode ? s.codeWidth : 0,
-    inspector: s.showInspector ? s.inspectorWidth : 0,
-    sidebar: s.showSidebar ? s.sidebarWidth : 0,
+    code: showCode ? s.codeWidth : 0,
+    inspector: showInspector ? s.inspectorWidth : 0,
+    sidebar: showSidebar ? s.sidebarWidth : 0,
   });
 
   useEffect(() => {
@@ -163,13 +167,13 @@ export default function App() {
     <div className="app">
       <TopBar />
       <main className="main">
-        {s.showSidebar && (
+        {showSidebar && (
           <>
             <Sidebar width={widths.sidebar} />
             <Splitter value={widths.sidebar} min={180} max={420} onChange={(v) => s.set({ sidebarWidth: v })} />
           </>
         )}
-        {s.showCode && (
+        {showCode && (
           <>
             <section className="pane code-pane" style={{ width: widths.code }}>
               <CodeEditor />
@@ -178,7 +182,7 @@ export default function App() {
           </>
         )}
         <VisualPane />
-        {s.showInspector && (
+        {showInspector && (
           <>
             <Splitter value={widths.inspector} min={240} max={520} direction={-1} onChange={(v) => s.set({ inspectorWidth: v })} />
             <Inspector width={widths.inspector} />
