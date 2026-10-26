@@ -103,7 +103,9 @@ export function validateDiagram(code: string): Promise<ValidationError | null> {
       return null;
     } catch (err) {
       const info = errorInfo(err);
-      return info.line ? { ...info, line: sourceLine(code, info.line) } : info;
+      if (!info.line) return info;
+      const line = sourceLine(code, info.line);
+      return { line, message: info.message.replace(/on line \d+/i, `on line ${line}`) };
     }
   });
 }
