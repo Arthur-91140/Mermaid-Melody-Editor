@@ -2221,6 +2221,10 @@ textarea {
 }
 
 /* Editable Mermaid preview */
+.preview.editable {
+  user-select: none;
+}
+
 .preview.editable [data-mme] {
   cursor: pointer;
 }

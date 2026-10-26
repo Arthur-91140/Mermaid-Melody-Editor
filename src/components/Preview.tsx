@@ -185,6 +185,7 @@ export function Preview({ exclusive = true }: PreviewProps) {
     let moved = false;
 
     if (hit && editor && parsed.model) {
+      e.preventDefault();
       const from = hit.getAttribute('data-mme')!;
       const additive = e.shiftKey || e.ctrlKey || e.metaKey;
       const cur = useSelection.getState().ids;
