@@ -1055,7 +1055,10 @@ textarea {
 .preview-paper {
   padding: 24px;
   border-radius: 10px;
-  /* Lifts the drawing off the canvas. */
+}
+
+/* A sheet behind drawings whose colors do not suit the canvas. */
+.preview-paper.sheet {
   box-shadow: 0 0 0 1px var(--border), var(--shadow);
 }
 

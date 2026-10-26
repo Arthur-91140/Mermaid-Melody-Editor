@@ -10,6 +10,7 @@ import type { PreviewEdit } from '../preview/types';
 import { useDocuments } from '../store/documents';
 import { useSelection } from '../store/selection';
 import { isDarkMermaidTheme, useSettings } from '../store/settings';
+import { useAppDark } from '../store/ui';
 import { useStatus } from '../store/status';
 
 interface View {
@@ -287,7 +288,10 @@ export function Preview({ exclusive = true }: PreviewProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [exclusive, editor, parsed.model, apply, run, t]);
 
+  const appDark = useAppDark();
   const dark = isDarkMermaidTheme(mermaidTheme);
+  // The drawing sits right on the canvas, unless its colors need a sheet of their own.
+  const sheet = dark === appDark ? undefined : dark ? '#1f2020' : '#ffffff';
   const message = syntaxError?.message ?? renderError;
 
   return (
@@ -304,8 +308,8 @@ export function Preview({ exclusive = true }: PreviewProps) {
       <div className="preview-content" style={{ transform: `translate(${view.x}px, ${view.y}px) scale(${view.k})` }}>
         <div
           ref={content}
-          className="preview-paper"
-          style={{ background: dark ? '#1f2020' : '#ffffff', padding: PAPER_PAD }}
+          className={`preview-paper${sheet ? ' sheet' : ''}`}
+          style={{ background: sheet, padding: PAPER_PAD }}
           dangerouslySetInnerHTML={{ __html: svg }}
         />
       </div>
