@@ -21,7 +21,7 @@ import { useT } from '../../i18n';
 import type { Pos } from '../../store/documents';
 import { useSelection } from '../../store/selection';
 import { useSettings } from '../../store/settings';
-import { GraphContext, type GraphCallbacks } from './context';
+import { GraphContext, startEditing, type GraphCallbacks } from './context';
 import { FloatingEdge } from './FloatingEdge';
 import { containsPoint, type Box } from './geometry';
 import { GraphMarkers } from './markers';
@@ -104,7 +104,8 @@ export interface GraphCanvasProps {
   onDropItem?: (payload: string, position: Pos) => void;
   onDuplicate?: (ids: string[]) => void;
   onCommitText: (id: string, text: string) => void;
-  onAutoLayout?: () => void;
+  /** Receives the measured size of every canvas node. */
+  onAutoLayout?: (sizes: Record<string, { width: number; height: number }>) => void;
   /** Ids that can be renamed inline (defaults to every node and edge). */
   canEdit?: (id: string) => boolean;
   palette?: ReactNode;
@@ -112,7 +113,7 @@ export interface GraphCanvasProps {
   hint?: ReactNode;
 }
 
-function Toolbar({ onAutoLayout, extra }: { onAutoLayout?: () => void; extra?: ReactNode }) {
+function Toolbar({ onAutoLayout, extra }: { onAutoLayout?: GraphCanvasProps['onAutoLayout']; extra?: ReactNode }) {
   const t = useT();
   const rf = useReactFlow();
   return (
@@ -134,7 +135,9 @@ function Toolbar({ onAutoLayout, extra }: { onAutoLayout?: () => void; extra?: R
             className="icon-btn small"
             title={t('canvas.autoLayout')}
             onClick={() => {
-              onAutoLayout();
+              const sizes: Record<string, { width: number; height: number }> = {};
+              for (const n of rf.getNodes()) sizes[n.id] = { width: size(n).w, height: size(n).h };
+              onAutoLayout(sizes);
               setTimeout(() => rf.fitView({ padding: 0.15, duration: 300 }), 60);
             }}
           >
@@ -153,7 +156,6 @@ function Inner(props: GraphCanvasProps) {
   const rf = useReactFlow();
   useSettings((s) => s.theme);
   const [nodes, setNodes] = useState<Node[]>(() => fitGroups(input));
-  const [editing, setEditing] = useState<string | null>(null);
   const selectedIds = useSelection((s) => s.ids);
   const propsRef = useRef(props);
   propsRef.current = props;
@@ -276,14 +278,13 @@ function Inner(props: GraphCanvasProps) {
 
   const callbacks: GraphCallbacks = useMemo(
     () => ({
-      editing,
       setEditing: (id) => {
         if (id && propsRef.current.canEdit && !propsRef.current.canEdit(id)) return;
-        setEditing(id);
+        startEditing(id);
       },
       commitText: (id, text) => propsRef.current.onCommitText(id, text),
     }),
-    [editing],
+    [],
   );
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -362,7 +363,7 @@ function Inner(props: GraphCanvasProps) {
           proOptions={{ hideAttribution: true }}
         >
           <Background variant={BackgroundVariant.Dots} gap={18} size={1.2} color="var(--grid)" />
-          <MiniMap pannable zoomable className="mme-minimap" nodeStrokeWidth={2} />
+          <MiniMap pannable zoomable className="mme-minimap" nodeStrokeWidth={2} style={{ width: 150, height: 100 }} />
           <Toolbar onAutoLayout={props.onAutoLayout} extra={props.toolbar} />
         </ReactFlow>
         {props.palette}

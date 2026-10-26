@@ -1,17 +1,19 @@
 import { Handle, Position } from '@xyflow/react';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { create } from 'zustand';
+
+/** Canvas id (node or edge) whose text is being edited inline. */
+export const useEditing = create<{ id: string | null }>(() => ({ id: null }));
+export const startEditing = (id: string | null) => useEditing.setState({ id });
 
 export interface GraphCallbacks {
-  /** Canvas id (node or edge) whose text is being edited inline. */
-  editing: string | null;
   setEditing: (id: string | null) => void;
   /** Called with the new display text when an inline edit is confirmed. */
   commitText: (id: string, text: string) => void;
 }
 
 export const GraphContext = createContext<GraphCallbacks>({
-  editing: null,
-  setEditing: () => undefined,
+  setEditing: startEditing,
   commitText: () => undefined,
 });
 
@@ -39,8 +41,8 @@ interface EditableTextProps {
 
 /** Text that turns into an input while `id` is being edited. */
 export function EditableText({ id, text, className, multiline = true, placeholder }: EditableTextProps) {
-  const { editing, setEditing, commitText } = useGraph();
-  const active = editing === id;
+  const { setEditing, commitText } = useGraph();
+  const active = useEditing((s) => s.id === id);
   const [draft, setDraft] = useState(text);
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {

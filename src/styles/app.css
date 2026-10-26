@@ -1497,3 +1497,36 @@ textarea {
     display: none;
   }
 }
+
+/* Flowchart nodes */
+.flow-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.35;
+  max-width: 340px;
+}
+
+.flow-node.square {
+  border-radius: 50%;
+}
+
+.flow-node-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.flow-node.selected .flow-node-svg {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 45%, transparent));
+}
+
+.flow-node-label {
+  position: relative;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

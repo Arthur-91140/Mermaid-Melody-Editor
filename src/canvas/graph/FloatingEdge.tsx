@@ -16,6 +16,8 @@ export interface FloatingEdgeData extends Record<string, unknown> {
   bend?: number;
   /** Whether the label can be edited with a double-click. */
   editable?: boolean;
+  stroke?: string;
+  strokeWidth?: string;
 }
 
 export type FloatingEdgeType = Edge<FloatingEdgeData, 'floating'>;
@@ -61,7 +63,11 @@ export function FloatingEdge({ id, source, target, data, selected }: EdgeProps<F
         markerStart={markerUrl(data?.markerStart, selected)}
         markerEnd={markerUrl(data?.markerEnd, selected)}
         interactionWidth={18}
-        style={{ ...LINE_STYLE[line], stroke: selected ? 'var(--accent)' : 'var(--edge)' }}
+        style={{
+          ...LINE_STYLE[line],
+          ...(data?.strokeWidth ? { strokeWidth: data.strokeWidth } : {}),
+          stroke: selected ? 'var(--accent)' : (data?.stroke ?? 'var(--edge)'),
+        }}
       />
       <EdgeLabelRenderer>
         {(label || data?.editable) && (
