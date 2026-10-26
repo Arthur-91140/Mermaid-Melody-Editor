@@ -1,8 +1,11 @@
+import '@xyflow/react/dist/style.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import App from './App';
+import './styles/app.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <div>Mermaid Melody Editor</div>
+    <App />
   </StrictMode>,
 );
