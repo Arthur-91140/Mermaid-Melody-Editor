@@ -1300,3 +1300,200 @@ textarea {
     display: none;
   }
 }
+
+/* ---------- Graph canvases ---------- */
+
+.graph-canvas {
+  position: absolute;
+  inset: 0;
+  outline: none;
+}
+
+.graph-canvas .react-flow {
+  --xy-background-color: var(--canvas);
+  --xy-node-border-radius: 0;
+  --xy-selection-background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+  --xy-selection-border: 1px dashed var(--accent);
+  background: var(--canvas);
+}
+
+.graph-canvas .react-flow__node {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--node-text);
+}
+
+.graph-canvas .react-flow__node.selected,
+.graph-canvas .react-flow__node:focus-visible {
+  outline: none;
+}
+
+.mme-handle {
+  width: 9px !important;
+  height: 9px !important;
+  border: 2px solid var(--panel) !important;
+  background: var(--accent) !important;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.react-flow__node:hover .mme-handle,
+.react-flow__node.selected .mme-handle,
+.react-flow.connecting .mme-handle {
+  opacity: 1;
+}
+
+.mme-edge-label {
+  position: absolute;
+  pointer-events: all;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+  white-space: pre;
+  cursor: default;
+  max-width: 240px;
+}
+
+.mme-edge-label.empty {
+  opacity: 0;
+  min-width: 18px;
+  min-height: 18px;
+}
+
+.react-flow__edge.selected ~ .mme-edge-label.empty,
+.mme-edge-label.empty:hover {
+  opacity: 0.6;
+}
+
+.mme-edge-label.selected {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.mme-edge-end-label {
+  position: absolute;
+  padding: 0 3px;
+  font-size: 11.5px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--canvas) 85%, transparent);
+  border-radius: 3px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.mme-inline-edit {
+  display: block;
+  width: 100%;
+  min-width: 80px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 2px 4px;
+  background: var(--panel);
+  color: var(--text);
+  text-align: center;
+  font: inherit;
+  resize: none;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-weak);
+  overflow: hidden;
+}
+
+.mme-placeholder {
+  color: var(--faint);
+}
+
+.mme-minimap {
+  background: var(--panel) !important;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.mme-minimap .react-flow__minimap-mask {
+  fill: color-mix(in srgb, var(--bg) 70%, transparent);
+}
+
+.mme-minimap .react-flow__minimap-node {
+  fill: var(--node-fill);
+  stroke: var(--node-stroke);
+}
+
+.canvas-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel) 90%, transparent);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11.5px;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100% - 300px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.palette {
+  left: 12px;
+  top: 12px;
+  max-height: calc(100% - 80px);
+  overflow-y: auto;
+}
+
+.palette-item {
+  cursor: grab;
+}
+
+.palette-item:active {
+  cursor: grabbing;
+}
+
+/* Generic group (subgraph, composite state, namespace) */
+.mme-group {
+  width: 100%;
+  height: 100%;
+  border: 1.5px dashed var(--cluster-stroke);
+  border-radius: 10px;
+  background: var(--cluster-fill);
+  position: relative;
+}
+
+.react-flow__node.selected .mme-group {
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+.mme-group-title {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  right: 0;
+  padding: 0 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mme-group-title .mme-inline-edit {
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .mme-minimap {
+    display: none;
+  }
+
+  .canvas-hint {
+    display: none;
+  }
+}
