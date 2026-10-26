@@ -81,6 +81,9 @@ export const fr = {
   'status.saved': 'Enregistré',
   'status.readOnly': 'Lecture seule',
   'status.lines': '{count} lignes',
+  'status.wrap': 'Retour à la ligne',
+  'status.wrapOff': 'Désactiver le retour à la ligne du code',
+  'status.wrapOn': 'Activer le retour à la ligne du code',
 
   'preview.zoomIn': 'Zoom avant',
   'preview.zoomOut': 'Zoom arrière',

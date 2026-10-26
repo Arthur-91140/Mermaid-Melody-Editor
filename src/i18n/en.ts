@@ -83,6 +83,9 @@ export const en: Dictionary = {
   'status.saved': 'Saved',
   'status.readOnly': 'Read-only',
   'status.lines': '{count} lines',
+  'status.wrap': 'Line wrap',
+  'status.wrapOff': 'Turn off code line wrapping',
+  'status.wrapOn': 'Turn on code line wrapping',
 
   'preview.zoomIn': 'Zoom in',
   'preview.zoomOut': 'Zoom out',

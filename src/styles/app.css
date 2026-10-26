@@ -332,6 +332,25 @@ textarea {
   color: var(--success);
 }
 
+.status-toggle {
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.status-toggle:hover {
+  background: var(--panel-3);
+  color: var(--text);
+}
+
+.status-toggle.active {
+  color: var(--accent);
+}
+
 .status-item.error {
   color: var(--danger);
   overflow: hidden;
