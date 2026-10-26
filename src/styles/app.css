@@ -2266,3 +2266,10 @@ textarea {
   left: 12px;
   top: 12px;
 }
+
+.preview .canvas-hint {
+  max-width: calc(100% - 120px);
+  white-space: normal;
+  text-align: center;
+  border-radius: 10px;
+}
